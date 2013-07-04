@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <!-- WebMidiAPI polyfill -->
+ <script src='http://cwilso.github.com/WebMIDIAPIShim/WebMIDIAPI.js'></script>
+ <!-- MidiFile -->
+ <script src="./../src/MidiEvents.js" type="text/javascript"></script>
+ <script src="./../src/MidiFileTrack.js" type="text/javascript"></script>
+ <script src="./../src/MidiFileHeader.js" type="text/javascript"></script>
+ <script src="./../src/MidiFile.js" type="text/javascript"></script>
+</head>
+<body>
+</head>
+<body>
+	<div class="app">
+		<h1>MidiFile</h1>
+		<h2>Test</h2>
+		<p>
+			In order to test this MIDI player, you must download the
+			<a href="http://jazz-soft.net/download/Jazz-Plugin/">Jazz Midi Plugin</a>.
+		</p>
+		<p>
+			<label>Pick a midi file:
+			<input type="file" onchange="readFile(this);" /></label>
+		</p>
+		<h2>Usefull</h2>
+		<p>
+			<a href="http://webaudio.github.io/web-midi-api/">WebMidi spec</a><br />
+			<a href="http://cwilso.github.io/WebMIDIAPIShim/">WebMidi polyfill</a><br />
+			<a href="http://www.sonicspot.com/guide/midifiles.html">Midi File Specs</a><br />
+			<a href="http://www.onicos.com/staff/iz/formats/smf006.html">Midi File Specs + Samples</a><br />
+			<a href="http://gnese.free.fr/Projects/KaraokeTime/Fichiers/karfaq.html">Kar File Specs</a><br />
+			<a href="http://www.personal.kent.edu/~sbirch/Music_Production/MP-II/MIDI/midi_protocol.htm">Midi File Specs</a><br />
+		</p>
+	</div>
+	<script type="text/javascript">var m = null;
+		var midiOutput;
+		// Requesting Midi Access
+		navigator.requestMIDIAccess().then( function onsuccesscallback( access ) {
+		  midiOutput = access.outputs()[0];
+		},function onerrorcallback( err ) {
+		  console.log("uh-oh! Something went wrong!  Error code: " + err.code );
+		});
+
+		/* FileHandler */
+		var midiFile, m;
+		function readFile(input) {
+			var reader = new FileReader();
+			reader.readAsArrayBuffer(input.files[0]);
+			reader.onloadend=function(event){
+				midiFile=new MidiFile(event.target.result);
+				midiFile.play(midiOutput);
+			}
+		}
+	</script>
+</body>
+</html>
