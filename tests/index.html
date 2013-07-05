@@ -43,16 +43,39 @@
 		  console.log("uh-oh! Something went wrong!  Error code: " + err.code );
 		});
 
-		/* FileHandler */
+		// FilePicker handler
 		var midiFile, m;
 		function readFile(input) {
 			var reader = new FileReader();
 			reader.readAsArrayBuffer(input.files[0]);
-			reader.onloadend=function(event){
-				midiFile=new MidiFile(event.target.result);
-				midiFile.play(midiOutput);
+			reader.onloadend=function(event) {
+			// creating the MidiFile instance
+			midiFile=new MidiFile(event.target.result);
+			// testing output
+			if(!midiOutput)
+				throw new Error('No midi output given.');
+			// Reading events
+			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), totalTime=0;
+			for(var i=midiFile.tracks.length-1; i>=0; i--) {
+				events=new MidiEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
+				totalTime=1500;
+				do {
+					event=events.next();
+					if(event&&event.type===MidiEvents.EVENT_MIDI) {
+						midiOutput.send(
+							[(event.subtype<<4)+event.channel, event.param1, (event.param2||0x00)],
+							totalTime+=0|(1000*(tempo/1000*event.delta/division)));
+					} else if(event&&event.type===MidiEvents.EVENT_META
+							&&event.subtype===MidiEvents.EVENT_META_SET_TEMPO) {
+						midiOutput.send(
+							[event.type, event.subtype, event.v1, event.v2, event.v3],
+							totalTime+=0|(1000*(tempo/1000*event.delta/division)));
+					}
+				} while(event);
 			}
-		}
+			console.log('Events sent. TotalTime: '+totalTime+', Tracks:'+midiFile.tracks.length);
+    }
+   }
 	</script>
 </body>
 </html>

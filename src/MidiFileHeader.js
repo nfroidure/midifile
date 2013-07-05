@@ -4,7 +4,7 @@
 // or using an AMD loader (like RequireJS)
 (function(root,define){ define([], function() {
 
-	function MidiFileHeader(buffer) {
+	function MidiFileHeader(buffer, strictMode) {
 		if(!(buffer instanceof ArrayBuffer))
 				throw Error('Invalid buffer received.');
 		this.datas=new DataView(buffer,0,14);

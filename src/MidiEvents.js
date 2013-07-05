@@ -212,6 +212,7 @@
 								if(strictMode)
 									throw new Error(stream.pos()+' Unknown meta event type '
 										+'('+metaEventType.toString(16)+').');
+								event.data=stream.readBytes(event.length);
 								return event;
 								break;
 						}
@@ -231,7 +232,8 @@
 								+eventTypeByte.toString(16)+', Delta: '+deltaTime+'.');
 						event={
 									'type':eventTypeByte,
-									'length':stream.readVarInt(),
+									'badsubtype':stream.readVarInt(),
+									'length':stream.readUint8()
 								};
 						event.data=stream.readBytes(event.length);
 						return event;
