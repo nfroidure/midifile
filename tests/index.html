@@ -22,7 +22,22 @@
 		</p>
 		<p>
 			<label>Pick a midi file:
-			<input type="file" onchange="readFile(this);" /></label>
+			<input type="file" onchange="readFile(this)" /></label><br />
+			<label>or choose one :
+				<select onchange="downloadFile(this)">
+					<option value=""></option>
+					<option value="SampleMountainman.mid">SampleMountainman.mid</option>
+					<option value="MidiOkFormat0.mid">MidiOkFormat0.mid</option>
+					<option value="MidiOkFormat1.mid">MidiOkFormat1.mid</option>
+					<option value="MidiBadTrackHdr.mid">MidiBadTrackHdr.mid</option>
+					<option value="MidiBadHeaderLength.mid">MidiBadHeaderLength.mid </option>
+					<option value="MidiBadHeaderChunk.mid">MidiBadHeaderChunk.mid</option>
+					<option value="MidiBadHeaderSMTPE.mid">MidiBadHeaderSMTPE.mid</option>
+					<option value="MidiBadTrackLength.mid">MidiBadTrackLength.mid</option>
+					<option value="MidiBadHeaderFormat.mid">MidiBadHeaderFormat.mid</option>
+					<option value="MidiBadHeaderTracksNum.mid">MidiBadHeaderTracksNum.mid</option>
+				</select>
+			</label>
 		</p>
 		<h2>Usefull</h2>
 		<p>
@@ -43,17 +58,34 @@
 		  console.log("uh-oh! Something went wrong!  Error code: " + err.code );
 		});
 
-		// FilePicker handler
-		var midiFile, m;
+		// File handlers
 		function readFile(input) {
 			var reader = new FileReader();
 			reader.readAsArrayBuffer(input.files[0]);
 			reader.onloadend=function(event) {
-			// creating the MidiFile instance
-			midiFile=new MidiFile(event.target.result);
+				playFile(event.target.result);
+   		}
+   	}
+		function downloadFile(input) {
+			if(!input.value)
+				return;
+			var oReq = new XMLHttpRequest();
+			oReq.open("GET", "../sounds/"+input.value, true);
+			oReq.responseType = "arraybuffer";
+			oReq.onload = function (oEvent) {
+				playFile(oReq.response);
+			};
+			oReq.send(null);
+   	}
+   
+   // file player
+		var midiFile, m;
+		function playFile(buffer) {
 			// testing output
 			if(!midiOutput)
 				throw new Error('No midi output given.');
+			// creating the MidiFile instance
+			midiFile=new MidiFile(buffer,true)
 			// Reading events
 			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), totalTime=0;
 			for(var i=midiFile.tracks.length-1; i>=0; i--) {
@@ -74,8 +106,7 @@
 				} while(event);
 			}
 			console.log('Events sent. TotalTime: '+totalTime+', Tracks:'+midiFile.tracks.length);
-    }
-   }
+   	}
 	</script>
 </body>
 </html>
