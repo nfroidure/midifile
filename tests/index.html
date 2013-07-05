@@ -47,13 +47,14 @@
 			<a href="http://www.onicos.com/staff/iz/formats/smf006.html">Midi File Specs + Samples</a><br />
 			<a href="http://gnese.free.fr/Projects/KaraokeTime/Fichiers/karfaq.html">Kar File Specs</a><br />
 			<a href="http://www.personal.kent.edu/~sbirch/Music_Production/MP-II/MIDI/midi_protocol.htm">Midi File Specs</a><br />
+			<a href="http://en.wikipedia.org/wiki/General_MIDI">General MIDI overview</a><br />
 		</p>
 	</div>
 	<script type="text/javascript">var m = null;
-		var midiOutput;
+		var midiAccess;
 		// Requesting Midi Access
 		navigator.requestMIDIAccess().then( function onsuccesscallback( access ) {
-		  midiOutput = access.outputs()[0];
+		  midiAccess = access;
 		},function onerrorcallback( err ) {
 		  console.log("uh-oh! Something went wrong!  Error code: " + err.code );
 		});
@@ -82,10 +83,13 @@
 		var midiFile, m;
 		function playFile(buffer) {
 			// testing output
-			if(!midiOutput)
-				throw new Error('No midi output given.');
+			if(!midiAccess)
+				throw new Error('No access to MIDI');
+			var midiOutput=midiAccess.outputs()[0];
 			// creating the MidiFile instance
 			midiFile=new MidiFile(buffer,true)
+			// Sending the track end signal
+			midiOutput.send([0xFF,0x2F,0x00],0);
 			// Reading events
 			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), totalTime=0;
 			for(var i=midiFile.tracks.length-1; i>=0; i--) {
