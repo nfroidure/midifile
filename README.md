@@ -3,7 +3,7 @@ MidiFile
 
 MidiFile is a project intended to read/write standard MIDI files with JavaScript.
 
-
+You can trst it here : http://rest4.org/github/nfroidure/MidiFile/master/tests/index.html
 
 What it does
 -------------
