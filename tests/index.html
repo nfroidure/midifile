@@ -99,9 +99,7 @@
 							totalTime+=0|(1000*(tempo/1000*event.delta/division)));
 					} else if(event&&event.type===MidiEvents.EVENT_META
 							&&event.subtype===MidiEvents.EVENT_META_SET_TEMPO) {
-						midiOutput.send(
-							[event.type, event.subtype, event.v1, event.v2, event.v3],
-							totalTime+=0|(1000*(tempo/1000*event.delta/division)));
+						tempo=event.tempo;
 					}
 				} while(event);
 			}
