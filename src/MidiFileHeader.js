@@ -49,6 +49,19 @@
 		return this.datas.setUint16(10,n);
 	};
 
+	// Tick compute
+	MidiFileHeader.prototype.getTickResolution=function(tempo) {
+		// Frames per seconds
+		if(this.datas.getUint16(12)&0x8000) {
+			return 1000000/(this.getSMPTEFrames() * this.getTicksPerFrame());
+		// Ticks per beat
+		} else {
+			// Default MIDI tempo is 120bpm, 500ms per beat
+			tempo=tempo||500;
+			return tempo/this.getTicksPerBeat();
+		}
+	};
+
 	// Time division type
 	MidiFileHeader.prototype.getTimeDivision=function() {
 		if(this.datas.getUint16(12)&0x8000) {

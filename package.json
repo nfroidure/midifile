@@ -1,0 +1,30 @@
+{
+	"name": "midifile",
+	"description": "Read/write standard MIDI files.",
+	"version": "0.1.0",
+	"author": "Nicolas Froidure",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/nfroidure/MidiFile.git"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"mocha": "~1.7.0"
+	},
+	"scripts": {
+		"test": "mocha test/*.mocha.js"
+	},
+	"keywords": [
+		"sound",
+		"music",
+		"midi",
+		"file",
+		"format",
+		"read",
+		"write"
+	],
+	"main": "./src/MidiFile"
+}
