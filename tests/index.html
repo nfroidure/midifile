@@ -91,23 +91,22 @@
 			// Sending the track end signal
 			midiOutput.send([0xFF,0x2F,0x00],0);
 			// Reading events
-			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), totalTime=0;
+			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), playTime=window.performance.now();
 			for(var i=midiFile.tracks.length-1; i>=0; i--) {
 				events=new MidiEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
-				totalTime=1500;
 				do {
 					event=events.next();
 					if(event&&event.type===MidiEvents.EVENT_MIDI) {
 						midiOutput.send(
 							[(event.subtype<<4)+event.channel, event.param1, (event.param2||0x00)],
-							totalTime+=0|(1000*(tempo/1000*event.delta/division)));
+							playTime+=0|(1000*(tempo/1000*event.delta/division)));
 					} else if(event&&event.type===MidiEvents.EVENT_META
 							&&event.subtype===MidiEvents.EVENT_META_SET_TEMPO) {
 						tempo=event.tempo;
 					}
 				} while(event);
 			}
-			console.log('Events sent. TotalTime: '+totalTime+', Tracks:'+midiFile.tracks.length);
+			console.log('Events sent. playTime: '+playTime+', Tracks:'+midiFile.tracks.length);
    	}
 	</script>
 </body>
