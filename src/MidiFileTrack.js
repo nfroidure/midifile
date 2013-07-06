@@ -52,13 +52,29 @@
 
 	return MidiFileTrack;
 
+
 });})(this,typeof define === 'function' && define.amd ?
-		define : function (name, deps, factory) {
-	var root=this;
-	if(typeof name === 'object') {
-		factory=deps; deps=name;
-	}
-	this.MidiFileTrack=factory.apply(this, deps.map(function(dep){
-		return root[dep.substring(dep.lastIndexOf('/')+1)];
-	}));
-}.bind(this));
+	// AMD
+	define :
+	// NodeJS
+	(typeof exports === 'object'?function (name, deps, factory) {
+		var root=this;
+		if(typeof name === 'object') {
+			factory=deps; deps=name;
+		}
+		module.exports=factory.apply(this, deps.map(function(dep){
+			return require(dep);
+		}));
+	}:
+	// Global
+	function (name, deps, factory) {
+		var root=this;
+		if(typeof name === 'object') {
+			factory=deps; deps=name;
+		}
+		this.MidiFileTrack=factory.apply(this, deps.map(function(dep){
+			return root[dep.substring(dep.lastIndexOf('/')+1)];
+		}));
+	}.bind(this)
+	)
+);

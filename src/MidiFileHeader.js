@@ -1,7 +1,7 @@
 // MidiFileHeader : Read and edit a midi header chunk in a given ArrayBuffer
 
 // AMD + global : You can use this object by inserting a script
-// or using an AMD loader (like RequireJS)
+// or using an AMD loader (like RequireJS) or using NodeJS
 (function(root,define){ define([], function() {
 
 	function MidiFileHeader(buffer, strictMode) {
@@ -117,12 +117,27 @@
 	return MidiFileHeader;
 
 });})(this,typeof define === 'function' && define.amd ?
-		define : function (name, deps, factory) {
-	var root=this;
-	if(typeof name === 'object') {
-		factory=deps; deps=name;
-	}
-	this.MidiFileHeader=factory.apply(this, deps.map(function(dep){
-		return root[dep.substring(dep.lastIndexOf('/')+1)];
-	}));
-}.bind(this));
+	// AMD
+	define :
+	// NodeJS
+	(typeof exports === 'object'?function (name, deps, factory) {
+		var root=this;
+		if(typeof name === 'object') {
+			factory=deps; deps=name;
+		}
+		module.exports=factory.apply(this, deps.map(function(dep){
+			return require(dep);
+		}));
+	}:
+	// Global
+	function (name, deps, factory) {
+		var root=this;
+		if(typeof name === 'object') {
+			factory=deps; deps=name;
+		}
+		this.MidiFileHeader=factory.apply(this, deps.map(function(dep){
+			return root[dep.substring(dep.lastIndexOf('/')+1)];
+		}));
+	}.bind(this)
+	)
+);
