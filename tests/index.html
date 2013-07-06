@@ -14,21 +14,22 @@
 </head>
 <body>
 	<div class="app">
-		<h1>MidiFile</h1>
-		<h2>Test</h2>
+		<h1>MidiFile.js &amp; WEBMIDI API based MIDI player</h1>
+		<h2>Test MidiFile.js</h2>
 		<p>
 			In order to test this MIDI player, you must download the
 			<a href="http://jazz-soft.net/download/Jazz-Plugin/">Jazz Midi Plugin</a>.
 		</p>
 		<p>
-			<label>Pick a midi file:
-			<input type="file" onchange="readFile(this)" /></label><br />
+			<label>Pick a MIDI file:
+			<input type="file" onchange="readFile(this)" accept="audio/x-midi" /></label><br />
 			<label>or choose one :
 				<select onchange="downloadFile(this)">
 					<option value=""></option>
 					<option value="SampleMountainman.mid">SampleMountainman.mid</option>
 					<option value="MidiOkFormat0.mid">MidiOkFormat0.mid</option>
 					<option value="MidiOkFormat1.mid">MidiOkFormat1.mid</option>
+					<option value="MidiOkFormat2.mid">MidiOkFormat2.mid</option>
 					<option value="MidiBadTrackHdr.mid">MidiBadTrackHdr.mid</option>
 					<option value="MidiBadHeaderLength.mid">MidiBadHeaderLength.mid </option>
 					<option value="MidiBadHeaderChunk.mid">MidiBadHeaderChunk.mid</option>
@@ -88,21 +89,24 @@
 			var midiOutput=midiAccess.outputs()[0];
 			// creating the MidiFile instance
 			midiFile=new MidiFile(buffer,true)
-			// Sending the track end signal
-			midiOutput.send([0xFF,0x2F,0x00],0);
 			// Reading events
-			var events, event, tempo=500, division=midiFile.header.getTicksPerBeat(), playTime=window.performance.now();
-			for(var i=midiFile.tracks.length-1; i>=0; i--) {
+			var events, event, tempo=500, playTime=0,
+				tickResolution=midiFile.header.getTickResolution();
+			console.log(tickResolution);
+			for(var i=0, j=midiFile.tracks.length; i<j; i++) {
+				// play start time (if format==2, play tracks sequentially)
+				playTime=(2==midiFile.header.getFormat()&&playTime?playTime:window.performance.now())
 				events=new MidiEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
 				do {
 					event=events.next();
+					//console.log(event)
 					if(event&&event.type===MidiEvents.EVENT_MIDI) {
 						midiOutput.send(
 							[(event.subtype<<4)+event.channel, event.param1, (event.param2||0x00)],
-							playTime+=0|(1000*(tempo/1000*event.delta/division)));
+							playTime+=0||(event.delta*tickResolution));
 					} else if(event&&event.type===MidiEvents.EVENT_META
 							&&event.subtype===MidiEvents.EVENT_META_SET_TEMPO) {
-						tempo=event.tempo;
+						tickResolution=midiFile.header.getTickResolution(event.tempo);
 					}
 				} while(event);
 			}

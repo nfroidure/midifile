@@ -65,6 +65,70 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(events.byteOffset,97);
 	});
 
+	it("Format 2 MIDI file", function() {
+		var mF=new MidiFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat2.mid')));
+			assert.equal(mF.header.getFormat(),2);
+			assert.equal(mF.header.getTracksCount(),9);
+			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTicksPerBeat(),96);
+			assert.equal(mF.tracks.length,9);
+			// Track 1
+			assert.equal(mF.tracks[0].getTrackLength(),24);
+			var events=mF.tracks[0].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,24);
+			assert.equal(events.byteOffset,22);
+			// Track 2
+			assert.equal(mF.tracks[1].getTrackLength(),20);
+			var events=mF.tracks[1].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,54);
+			// Track 3
+			assert.equal(mF.tracks[2].getTrackLength(),20);
+			var events=mF.tracks[2].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,82);
+			// Track 4
+			assert.equal(mF.tracks[3].getTrackLength(),20);
+			var events=mF.tracks[3].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,110);
+			// Track 5
+			assert.equal(mF.tracks[4].getTrackLength(),20);
+			var events=mF.tracks[4].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,138);
+			// Track 6
+			assert.equal(mF.tracks[5].getTrackLength(),20);
+			var events=mF.tracks[5].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,166);
+			// Track 7
+			assert.equal(mF.tracks[6].getTrackLength(),20);
+			var events=mF.tracks[6].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,194);
+			// Track 8
+			assert.equal(mF.tracks[7].getTrackLength(),20);
+			var events=mF.tracks[7].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,222);
+			// Track 9
+			assert.equal(mF.tracks[8].getTrackLength(),20);
+			var events=mF.tracks[8].getTrackEvents();
+			assert.equal(events.buffer.byteLength,270);
+			assert.equal(events.byteLength,20);
+			assert.equal(events.byteOffset,250);
+	});
+
 	it("Sample MIDI file Mountain Man", function() {
 		var mF=new MidiFile(toArrayBuffer(
 			fs.readFileSync(__dirname+'/../sounds/SampleMountainman.mid')));
