@@ -47,6 +47,14 @@ var trackEventsChunk=midiFile.tracks[0].getTrackEvents(),
 		} while(event);
 ```
 
+Testing
+-------------
+Unit tests are using mocha and NodeJS. Install them and run the following command :
+
+```bash
+mocha tests/*.mocha.js
+```
+
 Why ArrayBuffers ?
 -------------
 ArrayBuffer instances ar the best way to manage binary datas like MIDI files. It avoid high memory consumption.
