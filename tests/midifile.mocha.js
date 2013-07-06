@@ -18,7 +18,7 @@ describe('Reading well formed MIDI files', function(){
 
 	it("Format 0 MIDI file", function() {
 		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync('./../sounds/MidiOkFormat0.mid')));
+			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat0.mid')));
 			assert.equal(mF.header.getFormat(),0);
 			assert.equal(mF.header.getTracksCount(),1);
 			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
@@ -33,7 +33,7 @@ describe('Reading well formed MIDI files', function(){
 
 	it("Format 1 MIDI file", function() {
 		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync('./../sounds/MidiOkFormat1.mid')));
+			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat1.mid')));
 			assert.equal(mF.header.getFormat(),1);
 			assert.equal(mF.header.getTracksCount(),4);
 			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
@@ -67,7 +67,7 @@ describe('Reading well formed MIDI files', function(){
 
 	it("Sample MIDI file Mountain Man", function() {
 		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync('./../sounds/SampleMountainman.mid')));
+			fs.readFileSync(__dirname+'/../sounds/SampleMountainman.mid')));
 			assert.equal(mF.header.getFormat(),0);
 			assert.equal(mF.header.getTracksCount(),1);
 			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
@@ -79,4 +79,99 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(events.byteLength,47411);
 			assert.equal(events.byteOffset,22);
 	});
+});
+
+
+describe('Reading invalid MIDI files', function(){
+
+	it("Should fail when the header chunk is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderChunk.mid')));
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the MIDI format is invalid", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderFormat.mid')));
+			mF.header.getFormat();
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the header chunk is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderChunk.mid')));
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the header length is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderLength.mid')));
+			mF.getFormat();
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the header chunk is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderSmtp.mid')));
+				mF.header.getSMPTEFrames();
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should work when tracks count is not corresponding to the real track count", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderTracksNum.mid')),
+				true);
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the track header is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadTrackHdr.mid')));
+			} catch(e) {
+				done();
+			}
+	});
+
+	it("Should fail when the track length is bad", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadTrackLength.mid')));
+			} catch(e) {
+				done();
+			}
+	});
+
+});
+
+describe('Reading malformed MIDI files in strict mode', function(){
+
+	it("Should fail when tracks count is not corresponding to the real track count", function(done) {
+		try {
+			var mF=new MidiFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderTracksNum.mid')),
+				true);
+			} catch(e) {
+				done();
+			}
+	});
+
 });
