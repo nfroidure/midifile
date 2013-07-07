@@ -1,6 +1,6 @@
 var fs=require('fs'), assert=require('assert'),
-	MidiFile = require('./../src/MidiFile.js'),
-	MidiFileHeader = require('./../src/MidiFileHeader.js');
+	MIDIFile = require('./../src/MIDIFile.js'),
+	MIDIFileHeader = require('./../src/MIDIFileHeader.js');
 
 // Helper to get an ArrayBuffer from a NodeJS buffer
 // Borrowed here : http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer
@@ -17,11 +17,11 @@ function toArrayBuffer(buffer) {
 describe('Reading well formed MIDI files', function(){
 
 	it("Format 0 MIDI file", function() {
-		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat0.mid')));
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat0.mid')));
 			assert.equal(mF.header.getFormat(),0);
 			assert.equal(mF.header.getTracksCount(),1);
-			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,1);
 			assert.equal(mF.tracks[0].getTrackLength(),59);
@@ -32,11 +32,11 @@ describe('Reading well formed MIDI files', function(){
 	});
 
 	it("Format 1 MIDI file", function() {
-		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat1.mid')));
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat1.mid')));
 			assert.equal(mF.header.getFormat(),1);
 			assert.equal(mF.header.getTracksCount(),4);
-			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,4);
 			// Track 1
@@ -66,11 +66,11 @@ describe('Reading well formed MIDI files', function(){
 	});
 
 	it("Format 2 MIDI file", function() {
-		var mF=new MidiFile(toArrayBuffer(
-			fs.readFileSync(__dirname+'/../sounds/MidiOkFormat2.mid')));
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat2.mid')));
 			assert.equal(mF.header.getFormat(),2);
 			assert.equal(mF.header.getTracksCount(),9);
-			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,9);
 			// Track 1
@@ -130,11 +130,11 @@ describe('Reading well formed MIDI files', function(){
 	});
 
 	it("Sample MIDI file Mountain Man", function() {
-		var mF=new MidiFile(toArrayBuffer(
+		var mF=new MIDIFile(toArrayBuffer(
 			fs.readFileSync(__dirname+'/../sounds/SampleMountainman.mid')));
 			assert.equal(mF.header.getFormat(),0);
 			assert.equal(mF.header.getTracksCount(),1);
-			assert.equal(mF.header.getTimeDivision(),MidiFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
 			assert.equal(mF.header.getTicksPerBeat(),192);
 			assert.equal(mF.tracks.length,1);
 			assert.equal(mF.tracks[0].getTrackLength(),47411);
@@ -150,8 +150,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the header chunk is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderChunk.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderChunk.mid')));
 		} catch(e) {
 			done();
 		}
@@ -159,8 +159,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the MIDI format is invalid", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderFormat.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderFormat.mid')));
 			mF.header.getFormat();
 		} catch(e) {
 			done();
@@ -169,8 +169,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the header chunk is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderChunk.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderChunk.mid')));
 		} catch(e) {
 			done();
 		}
@@ -178,8 +178,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the header length is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderLength.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderLength.mid')));
 			mF.getFormat();
 		} catch(e) {
 			done();
@@ -188,8 +188,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the header chunk is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderSmtp.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderSmtp.mid')));
 				mF.header.getSMPTEFrames();
 		} catch(e) {
 			done();
@@ -198,8 +198,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should work when tracks count is not corresponding to the real track count", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderTracksNum.mid')),
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderTracksNum.mid')),
 				true);
 		} catch(e) {
 			done();
@@ -208,8 +208,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the track header is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadTrackHdr.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadTrackHdr.mid')));
 		} catch(e) {
 			done();
 		}
@@ -217,8 +217,8 @@ describe('Reading invalid MIDI files', function(){
 
 	it("Should fail when the track length is bad", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadTrackLength.mid')));
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadTrackLength.mid')));
 		} catch(e) {
 			done();
 		}
@@ -230,8 +230,8 @@ describe('Reading malformed MIDI files in strict mode', function(){
 
 	it("Should fail when tracks count is not corresponding to the real track count", function(done) {
 		try {
-			var mF=new MidiFile(toArrayBuffer(
-				fs.readFileSync(__dirname+'/../sounds/MidiBadHeaderTracksNum.mid')),
+			var mF=new MIDIFile(toArrayBuffer(
+				fs.readFileSync(__dirname+'/../sounds/MIDIBadHeaderTracksNum.mid')),
 				true);
 		} catch(e) {
 			done();

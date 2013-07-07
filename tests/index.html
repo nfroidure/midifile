@@ -5,10 +5,10 @@
  <!-- WebMidiAPI polyfill -->
  <script src='http://cwilso.github.com/WebMIDIAPIShim/WebMIDIAPI.js'></script>
  <!-- MidiFile -->
- <script src="./../src/MidiEvents.js" type="text/javascript"></script>
- <script src="./../src/MidiFileTrack.js" type="text/javascript"></script>
- <script src="./../src/MidiFileHeader.js" type="text/javascript"></script>
- <script src="./../src/MidiFile.js" type="text/javascript"></script>
+ <script src="./../src/MIDIEvents.js" type="text/javascript"></script>
+ <script src="./../src/MIDIFileTrack.js" type="text/javascript"></script>
+ <script src="./../src/MIDIFileHeader.js" type="text/javascript"></script>
+ <script src="./../src/MIDIFile.js" type="text/javascript"></script>
 </head>
 <body>
 </head>
@@ -27,16 +27,16 @@
 				<select onchange="downloadFile(this)">
 					<option value=""></option>
 					<option value="SampleMountainman.mid">SampleMountainman.mid</option>
-					<option value="MidiOkFormat0.mid">MidiOkFormat0.mid</option>
-					<option value="MidiOkFormat1.mid">MidiOkFormat1.mid</option>
-					<option value="MidiOkFormat2.mid">MidiOkFormat2.mid</option>
-					<option value="MidiBadTrackHdr.mid">MidiBadTrackHdr.mid</option>
-					<option value="MidiBadHeaderLength.mid">MidiBadHeaderLength.mid </option>
-					<option value="MidiBadHeaderChunk.mid">MidiBadHeaderChunk.mid</option>
-					<option value="MidiBadHeaderSMTPE.mid">MidiBadHeaderSMTPE.mid</option>
-					<option value="MidiBadTrackLength.mid">MidiBadTrackLength.mid</option>
-					<option value="MidiBadHeaderFormat.mid">MidiBadHeaderFormat.mid</option>
-					<option value="MidiBadHeaderTracksNum.mid">MidiBadHeaderTracksNum.mid</option>
+					<option value="MIDIOkFormat0.mid">MIDIOkFormat0.mid</option>
+					<option value="MIDIOkFormat1.mid">MIDIOkFormat1.mid</option>
+					<option value="MIDIOkFormat2.mid">MIDIOkFormat2.mid</option>
+					<option value="MIDIBadTrackHdr.mid">MIDIBadTrackHdr.mid</option>
+					<option value="MIDIBadHeaderLength.mid">MIDIBadHeaderLength.mid </option>
+					<option value="MIDIBadHeaderChunk.mid">MIDIBadHeaderChunk.mid</option>
+					<option value="MIDIBadHeaderSMTPE.mid">MIDIBadHeaderSMTPE.mid</option>
+					<option value="MIDIBadTrackLength.mid">MIDIBadTrackLength.mid</option>
+					<option value="MIDIBadHeaderFormat.mid">MIDIBadHeaderFormat.mid</option>
+					<option value="MIDIBadHeaderTracksNum.mid">MIDIBadHeaderTracksNum.mid</option>
 				</select>
 			</label>
 		</p>
@@ -49,6 +49,8 @@
 			<a href="http://gnese.free.fr/Projects/KaraokeTime/Fichiers/karfaq.html">Kar File Specs</a><br />
 			<a href="http://www.personal.kent.edu/~sbirch/Music_Production/MP-II/MIDI/midi_protocol.htm">Midi File Specs</a><br />
 			<a href="http://en.wikipedia.org/wiki/General_MIDI">General MIDI overview</a><br />
+			<a href="http://www.karaokar.com/index.php/telecharger/sound-fonts">Soundfonts bank</a><br />
+			<a href="http://theremin.music.uiowa.edu/">Free sounds of complete scales for various instruments</a><br />
 		</p>
 	</div>
 	<script type="text/javascript">var m = null;
@@ -88,24 +90,24 @@
 				throw new Error('No access to MIDI');
 			var midiOutput=midiAccess.outputs()[0];
 			// creating the MidiFile instance
-			midiFile=new MidiFile(buffer,true)
+			midiFile=new MIDIFile(buffer,true)
 			// Reading events
 			var events, event, tempo=500, playTime=0,
 				tickResolution=midiFile.header.getTickResolution();
 			console.log(tickResolution);
 			for(var i=0, j=midiFile.tracks.length; i<j; i++) {
 				// play start time (if format==2, play tracks sequentially)
-				playTime=(2==midiFile.header.getFormat()&&playTime?playTime:window.performance.now())
-				events=new MidiEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
+				playTime=(2==midiFile.header.getFormat()&&playTime?playTime:window.performance.now()+100)
+				events=new MIDIEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
 				do {
 					event=events.next();
 					//console.log(event)
-					if(event&&event.type===MidiEvents.EVENT_MIDI) {
+					if(event&&event.type===MIDIEvents.EVENT_MIDI) {
 						midiOutput.send(
 							[(event.subtype<<4)+event.channel, event.param1, (event.param2||0x00)],
 							playTime+=0||(event.delta*tickResolution));
-					} else if(event&&event.type===MidiEvents.EVENT_META
-							&&event.subtype===MidiEvents.EVENT_META_SET_TEMPO) {
+					} else if(event&&event.type===MIDIEvents.EVENT_META
+							&&event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
 						tickResolution=midiFile.header.getTickResolution(event.tempo);
 					}
 				} while(event);
