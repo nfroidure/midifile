@@ -1,19 +1,19 @@
-MidiFile
+MIDIFile
 ============
 
-MidiFile is a project intended to read/write standard MIDI files with JavaScript.
+MIDIFile is a project intended to read/write standard MIDI files with JavaScript. MIDFile is fully tested with the 3 existing MIDI formats.
 
-You can trst it here : http://rest4.org/github/nfroidure/MidiFile/master/tests/index.html
+You can test it here : http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html
 
 What it does
 -------------
 * Read MIDI files
 * Check MIDI file structure (using strictMode)
-*	(Not yet but soon) Write midi files
+*	(Not yet but soon) Write MIDI files
 
 What it doesn't do
 -------------
-*	Playing midi files. It's the role of the WebMidiAPI or it's polyfill. You can find a sample MIDI player based on MidiFile in the test folder.
+*	Playing MIDI files. It's the role of the WebMIDIAPI or it's polyfill. You can find a sample MIDI player based on MIDIFile in the test folder.
 
 Usage
 -------------
@@ -21,26 +21,26 @@ Usage
 // Your variable with a ArrayBuffer instance containing your MIDI file
 var anyBuffer;
 
-// Creating the MidiFile instance
-var midiFile= new MidiFile(anyBuffer);
+// Creating the MIDIFile instance
+var MIDIFile= new MIDIFile(anyBuffer);
 
 // Reading headers
-midiFile.header.getFormat(); // 0, 1 or 2
-midiFile.header.getTracksCount();
+MIDIFile.header.getFormat(); // 0, 1 or 2
+MIDIFile.header.getTracksCount();
 // Time division
-if(midiFile.header.getTimeDivision()===MidiFileHeader.TICKS_PER_BEAT) {
-	midiFile.header.getTicksPerBit()
+if(MIDIFile.header.getTimeDivision()===MIDIFileHeader.TICKS_PER_BEAT) {
+	MIDIFile.header.getTicksPerBit()
 }
 
 // Reading a track events
-midiFile.tracks[0].getTrackLength();
-var trackEventsChunk=midiFile.tracks[0].getTrackEvents(),
-	events=new MidiEvents.createParser(trackEventsChunk),
+MIDIFile.tracks[0].getTrackLength();
+var trackEventsChunk=MIDIFile.tracks[0].getTrackEvents(),
+	events=new MIDIEvents.createParser(trackEventsChunk),
 	event;
 		do {
 			event=events.next();
 			// Printing meta events only
-			if(event&&event.type===MidiEvents.EVENT_META
+			if(event&&event.type===MIDIEvents.EVENT_META
 					&&event.text) {
 				console.log('Text meta: '+event.text);
 			}
