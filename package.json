@@ -1,11 +1,11 @@
 {
 	"name": "midifile",
 	"description": "Read/write standard MIDI files.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": "Nicolas Froidure",
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/nfroidure/MidiFile.git"
+		"url": "http://github.com/nfroidure/MIDIFile.git"
 	},
 	"engines": {
 		"node": "*"
@@ -26,5 +26,5 @@
 		"read",
 		"write"
 	],
-	"main": "./src/MidiFile"
+	"main": "./src/MIDIFile"
 }
