@@ -1,8 +1,9 @@
 // MIDIFileTrack : Read (and soon edit) a MIDI track chunk in a given ArrayBuffer
 
-// AMD + global : You can use this object by inserting a script
-// or using an AMD loader (like RequireJS)
+// AMD + global + NodeJS : You can use this object by inserting a script
+// or using an AMD loader (like RequireJS) or using NodeJS
 (function(root,define){ define([], function() {
+// START: Module logic start
 
 	function MIDIFileTrack(buffer, start, strictMode) {
 		if(!(buffer instanceof ArrayBuffer))
@@ -49,6 +50,8 @@
 	MIDIFileTrack.prototype.getTrackEvents=function() {
 		return new DataView(this.datas.buffer,this.datas.byteOffset+8,this.datas.byteLength-8);
 	};
+
+// END: Module logic end
 
 	return MIDIFileTrack;
 

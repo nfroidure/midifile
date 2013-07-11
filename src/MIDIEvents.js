@@ -1,8 +1,9 @@
 // MIDIEvents : Read (and soon edit) events from various sources (ArrayBuffer, Stream)
 
-// AMD + global : You can use this object by inserting a script
-// or using an AMD loader (like RequireJS)
+// AMD + global + NodeJS : You can use this object by inserting a script
+// or using an AMD loader (like RequireJS) or using NodeJS
 (function(root,define){ define([], function() {
+// START: Module logic start
 
 	function MIDIEvents() {
 		throw new Error('MIDIEvents function not intended to be run.');
@@ -297,6 +298,8 @@
 			}
 		};
 	};
+
+// END: Module logic end
 
 	return MIDIEvents;
 

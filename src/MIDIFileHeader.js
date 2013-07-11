@@ -1,8 +1,9 @@
 // MIDIFileHeader : Read and edit a MIDI header chunk in a given ArrayBuffer
 
-// AMD + global : You can use this object by inserting a script
+// AMD + global + NodeJS : You can use this object by inserting a script
 // or using an AMD loader (like RequireJS) or using NodeJS
 (function(root,define){ define([], function() {
+// START: Module logic start
 
 	function MIDIFileHeader(buffer, strictMode) {
 		if(!(buffer instanceof ArrayBuffer))
@@ -126,6 +127,8 @@
 		this.datas.setUint8(12,0x80|smpteFrames);
 		this.datas.setUint8(13,ticksPerFrame);
 	};
+
+// END: Module logic end
 
 	return MIDIFileHeader;
 

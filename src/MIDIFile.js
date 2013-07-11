@@ -1,9 +1,10 @@
 // MIDIFile : Read (and soon edit) a MIDI file in a given ArrayBuffer
 
-// AMD + global : You can use this object by inserting a script
-// or using an AMD loader (like RequireJS)
+// AMD + global + NodeJS : You can use this object by inserting a script
+// or using an AMD loader (like RequireJS) or using NodeJS
 (function(root,define){ define(['./MIDIFileHeader','./MIDIFileTrack','./MIDIEvents'],
 	function(MIDIFileHeader,MIDIFileTrack, MIDIEvents) {
+// START: Module logic start
 
 	function MIDIFile(buffer, strictMode) {
 		if(!(buffer instanceof ArrayBuffer))
@@ -33,6 +34,8 @@
 		if(strictMode&&curIndex!=buffer.byteLength)
 			throw new Error('It seems that the buffer contains too much datas.');
 	}
+
+// END: Module logic end
 
 	return MIDIFile;
 
