@@ -128,6 +128,7 @@
 									'type':MIDIEvents.EVENT_META,
 									'subtype':metaEventType,
 									'length':metaEventLength,
+									'delta':deltaTime
 								};
 						switch(metaEventType) {
 							case MIDIEvents.EVENT_META_SEQUENCE_NUMBER:
