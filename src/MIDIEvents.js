@@ -266,7 +266,12 @@
 								break;
 							case MIDIEvents.EVENT_MIDI_NOTE_ON:
 								// Could check velocity 0 to switch to off but loosing informations
-								event.param2=stream.readUint8();
+								var velocity=stream.readUint8();
+								if(!velocity) {
+									event.subtype=MIDIEvents.EVENT_MIDI_NOTE_OFF;
+								} else {
+									event.param2=velocity;
+								}
 								return event;
 								break;
 							case MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH:
