@@ -208,7 +208,36 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(events.byteOffset,250);
 	});
 
-	it("Sample MIDI file Mountain Man", function() {
+	it("Karaoke MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat1-lyrics.mid')));
+			assert.equal(mF.header.getFormat(),1);
+			assert.equal(mF.header.getTracksCount(),1);
+			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
+			assert.equal(mF.header.getTicksPerBeat(),96);
+			assert.equal(mF.tracks.length,1);
+			assert.equal(mF.tracks[0].getTrackLength(),109);
+			var events=mF.tracks[0].getTrackEvents();
+			assert.equal(events.buffer.byteLength,131);
+			assert.equal(events.byteLength,109);
+			assert.equal(events.byteOffset,22);
+			// Reading lyrics
+			var lyrics=mF.getLyrics();
+			assert.equal(lyrics[0].text,'He');
+			assert.equal(lyrics[0].playTime,0);
+			assert.equal(lyrics[1].text,'llo');
+			assert.equal(Math.floor(lyrics[1].playTime),666);
+			assert.equal(lyrics[2].text,'\\Ka');
+			assert.equal(Math.floor(lyrics[1].playTime),666);
+			assert.equal(lyrics[3].text,'ra');
+			assert.equal(Math.floor(lyrics[1].playTime),666);
+			assert.equal(lyrics[4].text,'o');
+			assert.equal(Math.floor(lyrics[1].playTime),666);
+			assert.equal(lyrics[5].text,'ke');
+			assert.equal(Math.floor(lyrics[1].playTime),666);
+	});
+
+	it("Real world MIDI file : Mountain Man", function() {
 		var mF=new MIDIFile(toArrayBuffer(
 			fs.readFileSync(__dirname+'/../sounds/SampleMountainman.mid')));
 			assert.equal(mF.header.getFormat(),0);
