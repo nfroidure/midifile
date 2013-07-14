@@ -22,29 +22,32 @@ Usage
 var anyBuffer;
 
 // Creating the MIDIFile instance
-var MIDIFile= new MIDIFile(anyBuffer);
+var midiFile= new MIDIFile(anyBuffer);
 
 // Reading headers
-MIDIFile.header.getFormat(); // 0, 1 or 2
-MIDIFile.header.getTracksCount();
+midiFile.header.getFormat(); // 0, 1 or 2
+midiFile.header.getTracksCount();
 // Time division
-if(MIDIFile.header.getTimeDivision()===MIDIFileHeader.TICKS_PER_BEAT) {
-	MIDIFile.header.getTicksPerBit()
+if(midiFile.header.getTimeDivision()===MIDIFileHeader.TICKS_PER_BEAT) {
+	midiFile.header.getTicksPerBit()
 }
 
-// Reading a track events
-MIDIFile.tracks[0].getTrackLength();
-var trackEventsChunk=MIDIFile.tracks[0].getTrackEvents(),
+// Getting MIDI events
+midiFile.getMidiEvents();
+
+// Getting file lyrics
+midiFile.getLyrics();
+
+// Reading whole track events and filtering yourself
+var trackEventsChunk=midiFile.tracks[0].getTrackEvents(),
 	events=new MIDIEvents.createParser(trackEventsChunk),
 	event;
-		do {
-			event=events.next();
-			// Printing meta events only
-			if(event&&event.type===MIDIEvents.EVENT_META
-					&&event.text) {
-				console.log('Text meta: '+event.text);
-			}
-		} while(event);
+while(event=events.next()) {
+	// Printing meta events containing text only
+	if(event.type===MIDIEvents.EVENT_META&&event.text) {
+		console.log('Text meta: '+event.text);
+	}
+}
 ```
 
 Testing
