@@ -1,6 +1,7 @@
 var fs=require('fs'), assert=require('assert'),
 	MIDIFile = require('./../src/MIDIFile.js'),
-	MIDIFileHeader = require('./../src/MIDIFileHeader.js');
+	MIDIFileHeader = require('./../src/MIDIFileHeader.js'),
+	MIDIEvents = require('./../src/MIDIEvents.js');
 
 // Helper to get an ArrayBuffer from a NodeJS buffer
 // Borrowed here : http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer
@@ -29,6 +30,84 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(events.buffer.byteLength,81);
 			assert.equal(events.byteLength,59);
 			assert.equal(events.byteOffset,22);
+			// Check events retrieving
+			events=mF.getMidiEvents();
+			assert.equal(events.length,11);
+			assert.equal(events[0].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[0].subtype,MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE);
+			assert.equal(events[0].index,0x25);
+			assert.equal(events[0].delta,0);
+			assert.equal(events[0].channel,0);
+			assert.equal(events[0].param1,0x5);
+			assert.equal(events[1].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[1].subtype,MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE);
+			assert.equal(events[1].index,0x28);
+			assert.equal(events[1].delta,0);
+			assert.equal(events[1].channel,1);
+			assert.equal(events[1].param1,0x2E);
+			assert.equal(events[2].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[2].subtype,MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE);
+			assert.equal(events[2].index,0x2B);
+			assert.equal(events[2].delta,0);
+			assert.equal(events[2].channel,2);
+			assert.equal(events[2].param1,0x46);
+			assert.equal(events[3].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[3].subtype,MIDIEvents.EVENT_MIDI_NOTE_ON);
+			assert.equal(events[3].index,0x2E);
+			assert.equal(events[3].delta,0);
+			assert.equal(events[3].channel,2);
+			assert.equal(events[3].param1,0x30);
+			assert.equal(events[3].param2,0x60);
+			assert.equal(events[4].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[4].subtype,MIDIEvents.EVENT_MIDI_NOTE_ON);
+			assert.equal(events[4].index,0x32);
+			assert.equal(events[4].delta,0);
+			assert.equal(events[4].channel,2);
+			assert.equal(events[4].param1,0x3C);
+			assert.equal(events[4].param2,0x60);
+			assert.equal(events[5].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[5].subtype,MIDIEvents.EVENT_MIDI_NOTE_ON);
+			assert.equal(events[5].index,0x35);
+			assert.equal(events[5].delta,0x60);
+			assert.equal(events[5].channel,1);
+			assert.equal(events[5].param1,0x43);
+			assert.equal(events[5].param2,0x40);
+			assert.equal(events[6].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[6].subtype,MIDIEvents.EVENT_MIDI_NOTE_ON);
+			assert.equal(events[6].index,0x39);
+			assert.equal(events[6].delta,0x60);
+			assert.equal(events[6].channel,0);
+			assert.equal(events[6].param1,0x4C);
+			assert.equal(events[6].param2,0x20);
+			assert.equal(events[7].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[7].subtype,MIDIEvents.EVENT_MIDI_NOTE_OFF);
+			assert.equal(events[7].index,0x3D);
+			assert.equal(events[7].delta,192); // 2 bytes delta time
+			assert.equal(events[7].channel,2);
+			assert.equal(events[7].param1,0x30);
+			assert.equal(events[7].param2,0x40);
+			assert.equal(events[8].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[8].subtype,MIDIEvents.EVENT_MIDI_NOTE_OFF);
+			assert.equal(events[8].index,0x42);
+			assert.equal(events[8].delta,0x00);
+			assert.equal(events[8].channel,2);
+			assert.equal(events[8].param1,0x3C);
+			assert.equal(events[8].param2,0x40);
+			assert.equal(events[9].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[9].subtype,MIDIEvents.EVENT_MIDI_NOTE_OFF);
+			assert.equal(events[9].index,0x45);
+			assert.equal(events[9].delta,0x00);
+			assert.equal(events[9].channel,1);
+			assert.equal(events[9].param1,0x43);
+			assert.equal(events[9].param2,0x40);
+			assert.equal(events[10].type,MIDIEvents.EVENT_MIDI);
+			assert.equal(events[10].subtype,MIDIEvents.EVENT_MIDI_NOTE_OFF);
+			assert.equal(events[10].index,0x49);
+			assert.equal(events[10].delta,0x00);
+			assert.equal(events[10].channel,0);
+			assert.equal(events[10].param1,0x4C);
+			assert.equal(events[10].param2,0x40);
+			
 	});
 
 	it("Format 1 MIDI file", function() {

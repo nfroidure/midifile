@@ -88,8 +88,8 @@
 					}
 					return bytes;
 				},
-				'pos':function(l){
-					return '0x'+this.position.toString(16);
+				'pos':function(){
+					return '0x'+(this.buffer.byteOffset+this.position).toString(16);
 				},
 				'end':function(l){
 					return this.position===this.buffer.byteLength;
@@ -102,7 +102,7 @@
 		}
 		// Private vars
 		// Common vars
-		var deltaTime, eventTypeByte, lastEventTypeByte, event,
+		var deltaTime, eventTypeByte, lastEventTypeByte, event, eventIndex,
 		// system events vars
 			sysEventLength,
 		// meta events vars
@@ -116,6 +116,8 @@
 				// Check available datas
 				if(stream.end())
 					return null;
+				// Memoize the event index
+				eventIndex=stream.pos();
 				// Read the delta time
 				deltaTime=stream.readVarInt();
 				// Read the eventTypeByte
@@ -126,6 +128,7 @@
 						metaEventType=stream.readUint8();
 						metaEventLength=stream.readVarInt();
 						event={
+									'index':eventIndex,
 									'type':MIDIEvents.EVENT_META,
 									'subtype':metaEventType,
 									'length':metaEventLength,
@@ -222,6 +225,7 @@
 					} else if(eventTypeByte==MIDIEvents.EVENT_SYSEX
 							||eventTypeByte==MIDIEvents.EVENT_DIVSYSEX) {
 						event={
+									'index':eventIndex,
 									'type':eventTypeByte,
 									'length':stream.readVarInt(),
 								};
@@ -233,6 +237,7 @@
 							throw new Error(stream.pos()+' Unknown event type '
 								+eventTypeByte.toString(16)+', Delta: '+deltaTime+'.');
 						event={
+									'index':eventIndex,
 									'type':eventTypeByte,
 									'badsubtype':stream.readVarInt(),
 									'length':stream.readUint8()
@@ -253,6 +258,7 @@
 							MIDIEventParam1=stream.readUint8();
 						}
 						event={
+									'index':eventIndex,
 									'type':MIDIEvents.EVENT_MIDI,
 									'subtype':MIDIEventType,
 									'delta':deltaTime,

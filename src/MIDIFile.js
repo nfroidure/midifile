@@ -60,7 +60,8 @@
 			}
 		}
 		midiEvents.sort(function(a,b) {
-			return (a.playTime<b.playTime?-1:(a.playTime>b.playTime?1:0));
+			return (a.playTime<b.playTime?-1:(a.playTime>b.playTime?1:
+				(a.index<b.index?-1:(a.index>b.index?1:0))));
 		});
 		return midiEvents;
 	}
@@ -132,7 +133,6 @@
 	define :
 	// NodeJS
 	(typeof exports === 'object'?function (name, deps, factory) {
-		console.log('Node');
 		var root=this;
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
@@ -143,7 +143,6 @@
 	}:
 	// Global
 	function (name, deps, factory) {
-		console.log('Global');
 		var root=this;
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
