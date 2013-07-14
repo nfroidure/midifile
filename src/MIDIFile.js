@@ -53,7 +53,7 @@
 						tickResolution=this.header.getTickResolution(event.tempo);
 					}
 				// push midi events
-				} if(event.type===MIDIEvents.EVENT_MIDI) {
+				} else if(event.type===MIDIEvents.EVENT_MIDI) {
 					event.playTime=playTime;
 					midiEvents.push(event);
 				}
