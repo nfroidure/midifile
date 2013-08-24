@@ -1,4 +1,4 @@
-MIDIFile
+MIDIFile [![Build Status](https://travis-ci.org/nfroidure/MIDIFile.png?branch=master)](https://travis-ci.org/nfroidure/MIDIFile)
 ============
 
 MIDIFile is a project intended to read/write standard MIDI files with JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
