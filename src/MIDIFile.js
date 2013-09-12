@@ -36,33 +36,83 @@
 	}
 
 	MIDIFile.prototype.getMidiEvents = function() {
-		// Reading events
-		var events, event, tempo=500, playTime=0, midiEvents=[],
+		var events, event, playTime=0, midiEvents=[],
 			format=this.header.getFormat(),
 			tickResolution=this.header.getTickResolution();
-		for(var i=0, j=this.tracks.length; i<j; i++) {
-			// reset playtime if format is 2
-			playTime=(2==format&&playTime?playTime:0);
-			events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
-			// loooping throught events
-			 while(event=events.next()) {
-			 	playTime+=(event.delta?event.delta*tickResolution:0);
-				if(event.type===MIDIEvents.EVENT_META) {
-					// tempo change events
-					if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
-						tickResolution=this.header.getTickResolution(event.tempo);
+		// Reading events
+		// if the read is sequential
+		if(1!==format||1===this.tracks.length) {
+			for(var i=0, j=this.tracks.length; i<j; i++) {
+				// reset playtime if format is 2
+				playTime=(2==format&&playTime?playTime:0);
+				events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
+				// loooping throught events
+				 while(event=events.next()) {
+				 	playTime+=(event.delta?event.delta*tickResolution:0);
+					if(event.type===MIDIEvents.EVENT_META) {
+						// tempo change events
+						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
+							tickResolution=this.header.getTickResolution(event.tempo);
+						}
+					// push midi events
+					} else if(event.type===MIDIEvents.EVENT_MIDI) {
+						event.playTime=playTime;
+						midiEvents.push(event);
 					}
-				// push midi events
-				} else if(event.type===MIDIEvents.EVENT_MIDI) {
-					event.playTime=playTime;
-					midiEvents.push(event);
 				}
 			}
+		// the read is concurrent
+		} else {
+			var trackParsers=[], smallestDelta=-1;
+			// Creating parsers
+			for(var i=0, j=this.tracks.length; i<j; i++) {
+				trackParsers[i]={};
+				trackParsers[i].parser=new MIDIEvents.createParser(
+						this.tracks[i].getTrackEvents(),0,false);
+				trackParsers[i].curEvent=trackParsers[i].parser.next();
+			}
+			// Filling events
+			do {
+				smallestDelta=-1;
+				// finding the smallest event
+				for(var i=0,j=trackParsers.length; i<j; i++) {
+					if(trackParsers[i].curEvent) {
+						if(-1===smallestDelta||trackParsers[i].curEvent.delta
+							<trackParsers[smallestDelta].curEvent.delta) {
+							smallestDelta=i;
+						}
+					}
+				}
+				if(-1!==smallestDelta) {
+					// removing the delta of previous events
+					for(var i=0,j=trackParsers.length; i<j; i++) {
+						if(i!==smallestDelta&&trackParsers[i].curEvent) {
+							trackParsers[i].curEvent.delta-=trackParsers[smallestDelta].curEvent.delta;
+						}
+					}
+					// filling values
+					event=trackParsers[smallestDelta].curEvent;
+				 	playTime+=(event.delta?event.delta*tickResolution:0);
+					if(event.type===MIDIEvents.EVENT_META) {
+						// tempo change events
+						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
+							tickResolution=this.header.getTickResolution(event.tempo);
+						}
+					// push midi events
+					} else if(event.type===MIDIEvents.EVENT_MIDI) {
+						event.playTime=playTime;
+						midiEvents.push(event);
+					}
+					// getting next event
+					trackParsers[smallestDelta].curEvent=trackParsers[smallestDelta].parser.next();
+				}
+			} while(-1!==smallestDelta);
 		}
+		/*
 		midiEvents.sort(function(a,b) {
 			return (a.playTime<b.playTime?-1:(a.playTime>b.playTime?1:
 				(a.index<b.index?-1:(a.index>b.index?1:0))));
-		});
+		});*/
 		return midiEvents;
 	}
 
