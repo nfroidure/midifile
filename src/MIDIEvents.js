@@ -169,11 +169,10 @@
 								event.v1=stream.readUint8();
 								event.v2=stream.readUint8();
 								event.v3=stream.readUint8();
-								event.tempoMPQN=((event.v1 << 16)
+								event.tempo=((event.v1 << 16)
 									+ (event.v2 << 8)
 									+ event.v3);
-								event.tempo=1000/((60000000/event.tempoMPQN)/60);
-								event.tempoBPM=1000/event.tempo*60;
+								event.tempoBPM=60000000/event.tempoMPQN;
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SMTPE_OFFSET:

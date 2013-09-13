@@ -58,7 +58,7 @@
 		// Ticks per beat
 		} else {
 			// Default MIDI tempo is 120bpm, 500ms per beat
-			tempo=tempo||500;
+			tempo=tempo||500000;
 			return tempo/this.getTicksPerBeat();
 		}
 	};
@@ -70,15 +70,6 @@
 		}
 		return MIDIFileHeader.TICKS_PER_BEAT;
 	};
-
-	MIDIFileHeader.prototype.getTicksPerBeat=function() {
-		// Reading time division
-		var divisionWord=this.datas.getUint16(12);
-		if(divisionWord&0x8000) {
-			throw new Error('Time division is not expressed as ticks per beat.');
-		}
-		return divisionWord;
-	}
 
 	// Ticks per beat
 	MIDIFileHeader.prototype.getTicksPerBeat=function() {

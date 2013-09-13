@@ -48,7 +48,7 @@
 				events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
 				// loooping throught events
 				 while(event=events.next()) {
-				 	playTime+=(event.delta?event.delta*tickResolution:0);
+				 	playTime+=(event.delta?(event.delta*tickResolution)/1000:0);
 					if(event.type===MIDIEvents.EVENT_META) {
 						// tempo change events
 						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
@@ -92,7 +92,7 @@
 					}
 					// filling values
 					event=trackParsers[smallestDelta].curEvent;
-				 	playTime+=(event.delta?event.delta*tickResolution:0);
+				 	playTime+=(event.delta?(event.delta*tickResolution)/1000:0);
 					if(event.type===MIDIEvents.EVENT_META) {
 						// tempo change events
 						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
@@ -128,7 +128,7 @@
 			events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
 			// loooping throught events
 			 while(event=events.next()) {
-			 	playTime+=(event.delta?event.delta*tickResolution:0);
+			 	playTime+=(event.delta?(event.delta*tickResolution)/1000:0);
 				if(event.type===MIDIEvents.EVENT_META) {
 					// tempo change events
 					if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
