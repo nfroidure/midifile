@@ -101,7 +101,7 @@
 						(events[i].subtype<<4)+events[i].channel,
 						events[i].param1,
 						(events[i].param2||0x00)
-					], curTime+events[i].playTime);
+					], curTime+=events[i].playTime);
 			}
 			console.log('Events sent. playTime: '+events[j-1].playTime+', Tracks:'+midiFile.tracks.length);
    	}
