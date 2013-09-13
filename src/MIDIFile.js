@@ -63,9 +63,9 @@
 			}
 		// the read is concurrent
 		} else {
-			var trackParsers=[], smallestDelta=-1;
+			var trackParsers=[], smallestDelta=-1, i, j;
 			// Creating parsers
-			for(var i=0, j=this.tracks.length; i<j; i++) {
+			for(i=0, j=this.tracks.length; i<j; i++) {
 				trackParsers[i]={};
 				trackParsers[i].parser=new MIDIEvents.createParser(
 						this.tracks[i].getTrackEvents(),0,false);
@@ -75,7 +75,7 @@
 			do {
 				smallestDelta=-1;
 				// finding the smallest event
-				for(var i=0,j=trackParsers.length; i<j; i++) {
+				for(i=0, j=trackParsers.length; i<j; i++) {
 					if(trackParsers[i].curEvent) {
 						if(-1===smallestDelta||trackParsers[i].curEvent.delta
 							<trackParsers[smallestDelta].curEvent.delta) {
@@ -85,7 +85,7 @@
 				}
 				if(-1!==smallestDelta) {
 					// removing the delta of previous events
-					for(var i=0,j=trackParsers.length; i<j; i++) {
+					for(i=0, j=trackParsers.length; i<j; i++) {
 						if(i!==smallestDelta&&trackParsers[i].curEvent) {
 							trackParsers[i].curEvent.delta-=trackParsers[smallestDelta].curEvent.delta;
 						}
@@ -101,6 +101,7 @@
 					// push midi events
 					} else if(event.type===MIDIEvents.EVENT_MIDI) {
 						event.playTime=playTime;
+						event.track=smallestDelta;
 						midiEvents.push(event);
 					}
 					// getting next event
@@ -108,11 +109,6 @@
 				}
 			} while(-1!==smallestDelta);
 		}
-		/*
-		midiEvents.sort(function(a,b) {
-			return (a.playTime<b.playTime?-1:(a.playTime>b.playTime?1:
-				(a.index<b.index?-1:(a.index>b.index?1:0))));
-		});*/
 		return midiEvents;
 	}
 
@@ -139,7 +135,7 @@
 							lyrics.push(event);
 					} else if(event.subtype===MIDIEvents.EVENT_META_TEXT) {
 						// karaoke detection
-						if(i<karaoke+2&&karaoke>0&&event.text) {
+						if(i<karaoke+5&&karaoke>0&&event.text) {
 							// KAR file
 							// Special text
 							if(event.text[0]=='@') {

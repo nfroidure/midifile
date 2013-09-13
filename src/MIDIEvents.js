@@ -102,11 +102,7 @@
 		}
 		// Private vars
 		// Common vars
-		var deltaTime, eventTypeByte, lastEventTypeByte, event, eventIndex,
-		// system events vars
-			sysEventLength,
-		// meta events vars
-			metaEventType, metaEventLength,
+		var deltaTime, eventTypeByte, lastEventTypeByte, event,
 		// MIDI events vars
 			MIDIEventType, MIDIEventChannel, MIDIEventParam1, MIDIEventParam2;
 		// creating the parser object
@@ -116,27 +112,24 @@
 				// Check available datas
 				if(stream.end())
 					return null;
-				// Memoize the event index
-				eventIndex=stream.pos();
-				// Read the delta time
-				deltaTime=stream.readVarInt();
+				// Creating the event
+				event={
+					// Memoize the event index
+					'index':stream.pos(),
+					// Read the delta time
+					'delta':stream.readVarInt()
+				};
 				// Read the eventTypeByte
 				eventTypeByte=stream.readUint8();
 				if((eventTypeByte&0xF0) == 0xF0) {
 					// Meta events
 					if(eventTypeByte==MIDIEvents.EVENT_META) {
-						metaEventType=stream.readUint8();
-						metaEventLength=stream.readVarInt();
-						event={
-									'index':eventIndex,
-									'type':MIDIEvents.EVENT_META,
-									'subtype':metaEventType,
-									'length':metaEventLength,
-									'delta':deltaTime
-								};
-						switch(metaEventType) {
+						event.type=MIDIEvents.EVENT_META;
+						event.subtype=stream.readUint8();
+						event.length=stream.readVarInt();
+						switch(event.subtype) {
 							case MIDIEvents.EVENT_META_SEQUENCE_NUMBER:
-								if(strictMode&&2!==metaEventLength)
+								if(strictMode&&2!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								event.msb=stream.readUint8();
 								event.lsb=stream.readUint8();
@@ -149,22 +142,22 @@
 							case MIDIEvents.EVENT_META_LYRICS:
 							case MIDIEvents.EVENT_META_MARKER:
 							case MIDIEvents.EVENT_META_CUE_POINT:
-								event.text=stream.readText(metaEventLength);
+								event.text=stream.readText(event.length);
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_MIDI_CHANNEL_PREFIX:
-								if(strictMode&&1!==metaEventLength)
+								if(strictMode&&1!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								event.prefix=stream.readUint8();
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_END_OF_TRACK:
-								if(strictMode&&0!==metaEventLength)
+								if(strictMode&&0!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SET_TEMPO:
-								if(strictMode&&3!==metaEventLength)
+								if(strictMode&&3!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								event.v1=stream.readUint8();
 								event.v2=stream.readUint8();
@@ -172,11 +165,11 @@
 								event.tempo=((event.v1 << 16)
 									+ (event.v2 << 8)
 									+ event.v3);
-								event.tempoBPM=60000000/event.tempoMPQN;
+								event.tempoBPM=60000000/event.tempo;
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SMTPE_OFFSET:
-								if(strictMode&&5!==metaEventLength)
+								if(strictMode&&5!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								event.hour=stream.readUint8();
 								if(strictMode&&event.hour>23)
@@ -197,25 +190,25 @@
 								break;
 							 // Not implemented
 							case MIDIEvents.EVENT_META_TIME_SIGNATURE:
-								if(strictMode&&4!==metaEventLength)
+								if(strictMode&&4!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
-								while(metaEventLength--) { stream.readUint8(); }
+								stream.readBytes(event.length);
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_KEY_SIGNATURE:
-								if(strictMode&&2!==metaEventLength)
+								if(strictMode&&2!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
-								while(metaEventLength--) { stream.readUint8(); }
+								stream.readBytes(event.length);
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
-								event.data=stream.readBytes(metaEventLength);
+								event.data=stream.readBytes(event.length);
 								return event;
 								break;
 							default:
 								if(strictMode)
 									throw new Error(stream.pos()+' Unknown meta event type '
-										+'('+metaEventType.toString(16)+').');
+										+'('+event.subtype.toString(16)+').');
 								event.data=stream.readBytes(event.length);
 								return event;
 								break;
@@ -223,87 +216,77 @@
 					// System events
 					} else if(eventTypeByte==MIDIEvents.EVENT_SYSEX
 							||eventTypeByte==MIDIEvents.EVENT_DIVSYSEX) {
-						event={
-									'index':eventIndex,
-									'type':eventTypeByte,
-									'length':stream.readVarInt(),
-								};
+						event.type=eventTypeByte;
+						event.length=stream.readVarInt();
 						event.data=stream.readBytes(event.length);
 						return event;
 					// Unknown event, assuming it's system like event
 					} else {
 						if(strictMode)
 							throw new Error(stream.pos()+' Unknown event type '
-								+eventTypeByte.toString(16)+', Delta: '+deltaTime+'.');
-						event={
-									'index':eventIndex,
-									'type':eventTypeByte,
-									'badsubtype':stream.readVarInt(),
-									'length':stream.readUint8()
-								};
+								+eventTypeByte.toString(16)+', Delta: '+event.delta+'.');
+						event.type=eventTypeByte;
+						event.badsubtype=stream.readVarInt();
+						event.length=stream.readUint8();
 						event.data=stream.readBytes(event.length);
 						return event;
 					}
 				// MIDI events
 				} else {
-						// running status
-						if((eventTypeByte&0x80)==0){
-							if(!(MIDIEventType))
-								throw new Error(stream.pos()+' Running status without previous event');
-							MIDIEventParam1=eventTypeByte;
-						} else {
-							MIDIEventType=eventTypeByte>>4;
-							MIDIEventChannel=eventTypeByte&0x0F;
-							MIDIEventParam1=stream.readUint8();
-						}
-						event={
-									'index':eventIndex,
-									'type':MIDIEvents.EVENT_MIDI,
-									'subtype':MIDIEventType,
-									'delta':deltaTime,
-									'channel':MIDIEventChannel,
-									'param1':MIDIEventParam1
-								};
-						switch(MIDIEventType) {
-							case MIDIEvents.EVENT_MIDI_NOTE_OFF:
-								event.param2=stream.readUint8();
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_NOTE_ON:
-								// Could check velocity 0 to switch to off but loosing informations
-								var velocity=stream.readUint8();
-								if(!velocity) {
-									event.subtype=MIDIEvents.EVENT_MIDI_NOTE_OFF;
-								} else {
-									event.param2=velocity;
-								}
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH:
-								event.param2=stream.readUint8();
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_CONTROLLER:
-								event.param2=stream.readUint8();
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE:
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH:
-								return event;
-								break;
-							case MIDIEvents.EVENT_MIDI_PITCH_BEND:
-								event.param2=stream.readUint8();
-								return event;
-								break;
-							default:
-								if(strictMode)
-									throw new Error(stream.pos()+' Unknown MIDI event type '
-										+'('+MIDIEventType.toString(16)+').');
-								return event;
-								break;
-						}
+					// running status
+					if((eventTypeByte&0x80)==0){
+						if(!(MIDIEventType))
+							throw new Error(stream.pos()+' Running status without previous event');
+						MIDIEventParam1=eventTypeByte;
+					} else {
+						MIDIEventType=eventTypeByte>>4;
+						MIDIEventChannel=eventTypeByte&0x0F;
+						MIDIEventParam1=stream.readUint8();
+					}
+					event.type=MIDIEvents.EVENT_MIDI;
+					event.subtype=MIDIEventType;
+					event.channel=MIDIEventChannel;
+					event.param1=MIDIEventParam1;
+					switch(MIDIEventType) {
+						case MIDIEvents.EVENT_MIDI_NOTE_OFF:
+							event.param2=stream.readUint8();
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_NOTE_ON:
+							// Could check velocity 0 to switch to off but loosing informations
+							var velocity=stream.readUint8();
+							if(!velocity) {
+								event.subtype=MIDIEvents.EVENT_MIDI_NOTE_OFF;
+							} else {
+								event.param2=velocity;
+							}
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH:
+							event.param2=stream.readUint8();
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_CONTROLLER:
+							event.param2=stream.readUint8();
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE:
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH:
+							return event;
+							break;
+						case MIDIEvents.EVENT_MIDI_PITCH_BEND:
+							event.param2=stream.readUint8();
+							return event;
+							break;
+						default:
+							if(strictMode)
+								throw new Error(stream.pos()+' Unknown MIDI event type '
+									+'('+MIDIEventType.toString(16)+').');
+							return event;
+							break;
+					}
 				}
 			}
 		};
