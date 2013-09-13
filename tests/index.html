@@ -94,32 +94,16 @@
 				throw new Error('No access to MIDI');
 			var midiOutput=midiAccess.outputs()[0];
 			// creating the MidiFile instance
-			midiFile=new MIDIFile(buffer)
-			// Reading events
-			var events, event, tempo=500,
-				startTime=playTime=window.performance.now(),
-				format=midiFile.header.getFormat(),
-				tickResolution=midiFile.header.getTickResolution();
-			// Reading each track
-			for(var i=0, j=midiFile.tracks.length; i<j; i++) {
-				// play start time (if format==2, play tracks sequentially)
-				playTime=(2==format&&playTime?playTime:window.performance.now());
-				events=new MIDIEvents.createParser(midiFile.tracks[i].getTrackEvents(),0,false);
-				// loooping throught events
-				while(event=events.next()) {
-					// tempo change events
-					if(event.type===MIDIEvents.EVENT_META
-						&&event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
-						tickResolution=midiFile.header.getTickResolution(event.tempo);
-					// play midi events
-					} else if(event.type===MIDIEvents.EVENT_MIDI) {
-						midiOutput.send(
-							[(event.subtype<<4)+event.channel, event.param1, (event.param2||0x00)],
-							playTime+=(event.delta*tickResolution));
-					}
-				}
+			midiFile=new MIDIFile(buffer);
+			var events=midiFile.getMidiEvents(), curTime=performance.now();
+			for(var i=0, j=events.length; i<j; i++) {
+				midiOutput.send([
+						(events[i].subtype<<4)+events[i].channel,
+						events[i].param1,
+						(events[i].param2||0x00)
+					], curTime+events[i].playTime);
 			}
-			console.log('Events sent. playTime: '+playTime+', Tracks:'+midiFile.tracks.length);
+			console.log('Events sent. playTime: '+events[j-1].playTime+', Tracks:'+midiFile.tracks.length);
    	}
 	</script>
 </body>
