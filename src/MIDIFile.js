@@ -35,8 +35,8 @@
 			throw new Error('It seems that the buffer contains too much datas.');
 	}
 
-	MIDIFile.prototype.getMidiEvents = function() {
-		var events, event, playTime=0, midiEvents=[],
+	MIDIFile.prototype.getEvents = function(type, subtype) {
+		var events, event, playTime=0, filteredEvents=[],
 			format=this.header.getFormat(),
 			tickResolution=this.header.getTickResolution();
 		// Reading events
@@ -54,10 +54,12 @@
 						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
 							tickResolution=this.header.getTickResolution(event.tempo);
 						}
-					// push midi events
-					} else if(event.type===MIDIEvents.EVENT_MIDI) {
+					}
+					// push the asked events
+					if(((!type)||event.type===type)
+						&&((!subtype)||(event.subtype&&event.subtype===type))) {
 						event.playTime=playTime;
-						midiEvents.push(event);
+						filteredEvents.push(event);
 					}
 				}
 			}
@@ -98,71 +100,60 @@
 						if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
 							tickResolution=this.header.getTickResolution(event.tempo);
 						}
+					}
 					// push midi events
-					} else if(event.type===MIDIEvents.EVENT_MIDI) {
+					if(((!type)||event.type===type)
+						&&((!subtype)||(event.subtype&&event.subtype===type))) {
 						event.playTime=playTime;
 						event.track=smallestDelta;
-						midiEvents.push(event);
+						filteredEvents.push(event);
 					}
 					// getting next event
 					trackParsers[smallestDelta].curEvent=trackParsers[smallestDelta].parser.next();
 				}
 			} while(-1!==smallestDelta);
 		}
-		return midiEvents;
-	}
+		return filteredEvents;
+	};
+
+	MIDIFile.prototype.getMidiEvents = function() {
+		return this.getEvents(MIDIEvents.EVENT_MIDI);
+	};
 
 	MIDIFile.prototype.getLyrics = function() {
-		// Reading events
-		var events, event, tempo=500, playTime=0,
-			format=this.header.getFormat(),
-			tickResolution=this.header.getTickResolution(),
-			karaoke=-1, texts=[], lyrics=[];
-		for(var i=0, j=this.tracks.length; i<j; i++) {
-			// reset playtime if format is 2
-			playTime=(2==format&&playTime?playTime:0);
-			events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
-			// loooping throught events
-			 while(event=events.next()) {
-			 	playTime+=(event.delta?(event.delta*tickResolution)/1000:0);
-				if(event.type===MIDIEvents.EVENT_META) {
-					// tempo change events
-					if(event.subtype===MIDIEvents.EVENT_META_SET_TEMPO) {
-						tickResolution=this.header.getTickResolution(event.tempo);
-					// lyrics
-					} else if(event.subtype===MIDIEvents.EVENT_META_LYRICS) {
-							event.playTime=playTime;
-							lyrics.push(event);
-					} else if(event.subtype===MIDIEvents.EVENT_META_TEXT) {
-						// karaoke detection
-						if(i<karaoke+5&&karaoke>0&&event.text) {
-							// KAR file
-							// Special text
-							if(event.text[0]=='@') {
-								if(event.text[1]=='T') {
-									//console.log('Title : '+event.text.substring(2));
-								} else if(event.text[1]=='I') {
-									//console.log('Info : '+event.text.substring(2));
-								} else if(event.text[1]=='L') {
-									//console.log('Lang : '+event.text.substring(2));
-								}
-							// karaoke text follows, remove all previous text
-							} else if(0===event.text.indexOf('words')) {
-								texts.length=0;
-								//console.log('Word marker found');
-							} else {
-								event.playTime=playTime;
-								texts.push(event);
-							}
-						} else if(1==format&&event.text&&i<3&&0===event.text.indexOf('@K')) {
-							karaoke=i;
-							//console.log('Karaoke. Track: '+karaoke)
-						}
+		var events=this.getEvents(MIDIEvents.EVENT_META),
+			texts=[], lyrics=[], event, karaoke=-1, format=this.header.getFormat();
+		for(var i=0, j=events.length; i<j; i++) {
+			event=events[i];
+			// Lyrics
+			if(event.subtype===MIDIEvents.EVENT_META_LYRICS) {
+				lyrics.push(event);
+			// Texts
+			} else if(event.subtype===MIDIEvents.EVENT_META_TEXT) {
+				// Ignore special texts
+				if(event.text[0]=='@') {
+					if(event.text[1]=='T') {
+						//console.log('Title : '+event.text.substring(2));
+					} else if(event.text[1]=='I') {
+						//console.log('Info : '+event.text.substring(2));
+					} else if(event.text[1]=='L') {
+						//console.log('Lang : '+event.text.substring(2));
+					}
+				// karaoke text follows, remove all previous text
+				} else if(0===event.text.indexOf('words')) {
+					texts.length=0;
+					//console.log('Word marker found');
+				// Karaoke texts
+				} else {
+					// If playtime is greater than 0
+					if(0!==event.playTime) {
+						texts.push(event);
 					}
 				}
 			}
 		}
-		if(lyrics.length) {
+		// Choosing the right lyrics
+		if(lyrics.length>2) {
 			return lyrics;
 		} else if(texts.length) {
 			return texts;
