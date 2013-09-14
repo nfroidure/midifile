@@ -90,20 +90,23 @@
 		function playFile(buffer) {
 			var midiOutput;
 			// testing output
-			if(!midiAccess)
-				throw new Error('No access to MIDI');
-			var midiOutput=midiAccess.outputs()[0];
+			if(midiAccess) {
+				midiOutput=midiAccess.outputs()[0];
+			} else {
+				console.log('No access to MIDI output.');
+			}
 			// creating the MidiFile instance
 			midiFile=new MIDIFile(buffer);
 			var events=midiFile.getMidiEvents(), curTime=performance.now();
 			for(var i=0, j=events.length; i<j; i++) {
-				midiOutput.send([
+				midiOutput&&midiOutput.send([
 						(events[i].subtype<<4)+events[i].channel,
 						events[i].param1,
 						(events[i].param2||0x00)
 					], curTime+events[i].playTime);
 			}
-			console.log('Events sent. playTime: '+events[j-1].playTime+', Tracks:'+midiFile.tracks.length);
+			console.log('Events read, playTime: '+events[events.length-1].playTime
+				+', tracks:'+midiFile.tracks.length+'.');
    	}
 	</script>
 </body>
