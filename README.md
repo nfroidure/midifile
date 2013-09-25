@@ -3,8 +3,6 @@ MIDIFile [![Build Status](https://travis-ci.org/nfroidure/MIDIFile.png?branch=ma
 
 MIDIFile is a project intended to read/write standard MIDI files with JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
 
-You can test it here : http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html
-
 What it does
 -------------
 * Read MIDI files
