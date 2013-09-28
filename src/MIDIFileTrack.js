@@ -15,6 +15,9 @@
 			a[4]=0x00; a[5]=0x00; a[6]=0x00; a[7]=0x04;
 			// Adding the track end event
 			a[8]=0x00; a[9]=0xFF; a[10]=0x2F; a[11]=0x00;
+			// Saving the buffer
+			this.datas=new DataView(a.buffer, 0,
+				MIDIFileTrack.HDR_LENGTH+4);
 		// parsing the given buffer
 		} else {
 			if(!(buffer instanceof ArrayBuffer))
