@@ -191,7 +191,15 @@
 	};
 
 	// Basic events writting
-	MIDIFile.prototype.setTrackEvents = function(index) {
+	MIDIFile.prototype.setTrackEvents = function(index, events) {
+		var bufferLength=MIDIEvents.getRequiredBufferLength(events),
+			destination;
+		if(index>this.tracks.length||index<0) {
+			throw Error('Invalid track index ('+index+')');
+		}
+		if((!events)||(!events.length)) {
+			throw Error('A track must contain at least one event, none given.');
+		}
 	};
 
 	// Remove a track

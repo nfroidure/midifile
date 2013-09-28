@@ -107,7 +107,6 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(events[10].channel,0);
 			assert.equal(events[10].param1,0x4C);
 			assert.equal(events[10].param2,0x40);
-			
 	});
 
 	it("Format 1 MIDI file", function() {
@@ -119,29 +118,29 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,4);
 			// Track 1
-			assert.equal(mF.tracks[0].getTrackLength(),20);
+			assert.equal(mF.tracks[0].getTrackLength(),19);
 			var events=mF.tracks[0].getTrackContent();
-			assert.equal(events.buffer.byteLength,118);
-			assert.equal(events.byteLength,20);
+			assert.equal(events.buffer.byteLength,117);
+			assert.equal(events.byteLength,19);
 			assert.equal(events.byteOffset,22);
 			// Track 2
 			assert.equal(mF.tracks[1].getTrackLength(),16);
 			var events=mF.tracks[1].getTrackContent();
-			assert.equal(events.buffer.byteLength,118);
+			assert.equal(events.buffer.byteLength,117);
 			assert.equal(events.byteLength,16);
-			assert.equal(events.byteOffset,50);
+			assert.equal(events.byteOffset,49);
 			// Track 3
 			assert.equal(mF.tracks[2].getTrackLength(),15);
 			var events=mF.tracks[2].getTrackContent();
-			assert.equal(events.buffer.byteLength,118);
+			assert.equal(events.buffer.byteLength,117);
 			assert.equal(events.byteLength,15);
-			assert.equal(events.byteOffset,74);
+			assert.equal(events.byteOffset,73);
 			// Track 4
 			assert.equal(mF.tracks[3].getTrackLength(),21);
 			var events=mF.tracks[3].getTrackContent();
-			assert.equal(events.buffer.byteLength,118);
+			assert.equal(events.buffer.byteLength,117);
 			assert.equal(events.byteLength,21);
-			assert.equal(events.byteOffset,97);
+			assert.equal(events.byteOffset,96);
 	});
 
 	it("Format 2 MIDI file", function() {
@@ -344,6 +343,55 @@ describe('Reading malformed MIDI files in strict mode', function(){
 		} catch(e) {
 			done();
 		}
+	});
+
+});
+
+describe('Calculating required buffer length ', function() {
+
+	it("Should work with events of Format 0 MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat0.mid')));
+		var events=mF.getTrackEvents(0);
+		// -2 bytes for running statuses
+		assert.equal(MIDIEvents.getRequiredBufferLength(events)-2,
+			mF.tracks[0].getTrackLength());
+	});
+
+	it("Should work with events of Format 1 MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat1.mid')));
+		var events=mF.getTrackEvents(0);
+		assert.equal(MIDIEvents.getRequiredBufferLength(events),
+			mF.tracks[0].getTrackLength());
+		events=mF.getTrackEvents(1);
+		// -1 byte for running status
+		assert.equal(MIDIEvents.getRequiredBufferLength(events)-1,
+			mF.tracks[1].getTrackLength());
+		events=mF.getTrackEvents(2);
+		// -1 byte for running statuses
+		assert.equal(MIDIEvents.getRequiredBufferLength(events)-1,
+			mF.tracks[2].getTrackLength());
+		events=mF.getTrackEvents(3);
+		// -3 bytes for running statuses
+		assert.equal(MIDIEvents.getRequiredBufferLength(events)-3,
+			mF.tracks[3].getTrackLength());
+	});
+
+	it("Should work with events of Format 1 MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat1-lyrics.mid')));
+		var events=mF.getTrackEvents(0);
+		assert.equal(MIDIEvents.getRequiredBufferLength(events),
+			mF.tracks[0].getTrackLength());
+	});
+
+	it("Should work with events of Format 2 MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat2.mid')));
+		var events=mF.getTrackEvents(0);
+		assert.equal(MIDIEvents.getRequiredBufferLength(events),
+			mF.tracks[0].getTrackLength());
 	});
 
 });

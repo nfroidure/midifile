@@ -39,8 +39,20 @@
 	MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE=0xC,
 	MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH=0xD,
 	MIDIEvents.EVENT_MIDI_PITCH_BEND=0xE;
+	// MIDI event sizes
+	MIDIEvents.MIDI_1PARAM_EVENTS=[
+		MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE,
+		MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH
+	];
+	MIDIEvents.MIDI_2PARAMS_EVENTS=[
+		MIDIEvents.EVENT_MIDI_NOTE_OFF,
+		MIDIEvents.EVENT_MIDI_NOTE_ON,
+		MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH,
+		MIDIEvents.EVENT_MIDI_CONTROLLER,
+		MIDIEvents.EVENT_MIDI_PITCH_BEND
+	];
 
-	// Create a event stream parser
+	// Create an event stream parser
 	MIDIEvents.createParser=function(stream, startAt, strictMode) {
 		// Wrap DataView into a data stream
 		if(stream instanceof DataView) {
@@ -259,6 +271,7 @@
 							var velocity=stream.readUint8();
 							if(!velocity) {
 								event.subtype=MIDIEvents.EVENT_MIDI_NOTE_OFF;
+								event.param2=127; // Find a standard telling what to do here
 							} else {
 								event.param2=velocity;
 							}
@@ -292,6 +305,46 @@
 				}
 			}
 		};
+	};
+
+	// Return the buffer length needed to encode the given events
+	MIDIEvents.getRequiredBufferLength=function(events) {
+		var bufferLength=0, event;
+		// Calculating the track size by adding events lengths
+		for(var i=0, j=events.length; i<j; i++) {
+			// Computing necessary bytes to encode the delta value
+			bufferLength+=
+					(events[i].delta>>>21?4:
+					(events[i].delta>>>14?3:
+					(events[i].delta>>>7?2:1)));
+			// MIDI Events have various fixed lengths
+			if(events[i].type===MIDIEvents.EVENT_MIDI) {
+				// Adding a byte for subtype + channel
+				bufferLength++;
+				// Adding a byte for the first params
+				bufferLength++;
+				// Adding a byte for the optionnal second param
+				if(-1!==MIDIEvents.MIDI_2PARAMS_EVENTS.indexOf(events[i].subtype)) {
+					bufferLength++;
+				}
+			// META / SYSEX events lengths are self defined
+			} else {
+				// Adding a byte for the event type
+				bufferLength++;
+				// Adding a byte for META events subtype
+				if(events[i].type===MIDIEvents.EVENT_META) {
+					bufferLength++;
+				}
+				// Adding necessary bytes to encode the length
+				bufferLength+=
+					(events[i].length>>>21?4:
+					(events[i].length>>>14?3:
+					(events[i].length>>>7?2:1)));
+				// Adding bytes corresponding to the event length
+				bufferLength+=events[i].length;
+			}
+		}
+		return bufferLength;
 	};
 
 // END: Module logic end
