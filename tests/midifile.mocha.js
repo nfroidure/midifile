@@ -348,10 +348,29 @@ describe('Reading malformed MIDI files in strict mode', function(){
 
 });
 
-describe('Create a MIDI file', function(){
+describe('MIDI file', function(){
+	var mF;
 
-	it("Should work", function() {
-		var mF=new MIDIFile();
+	it("creation should work", function() {
+		mF=new MIDIFile();
+	});
+
+	it("ticks per beat setting should work", function() {
+		mF.header.setTicksPerBeat(128);
+	});
+
+	it("Track addition should work", function() {
+		mF.addTrack(1); // at the end by specifying an index
+		mF.addTrack(); // at the end
+		mF.addTrack(1); // in the middle
+		assert(mF.tracks.length==mF.header.getTracksCount());
+		assert(mF.tracks.length==4);
+	});
+
+	it("Track deletion should work", function() {
+		mF.deleteTrack(1);
+		assert(mF.tracks.length==mF.header.getTracksCount());
+		assert(mF.tracks.length==3);
 	});
 
 });

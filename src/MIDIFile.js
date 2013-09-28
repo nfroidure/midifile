@@ -175,25 +175,29 @@
 	};
 
 	// Basic events reading
-	MIDIFile.prototype.getTrackEvents = function(track) {
-		if(track>=this.tracks.length) {
-			throw Error('Invalid track index ('+track+')');
+	MIDIFile.prototype.getTrackEvents = function(index) {
+		var event, events=[], parser;
+		if(index>this.tracks.length||index<0) {
+			throw Error('Invalid track index ('+index+')');
 		}
-		return this.getEvents(MIDIEvents.EVENT_MIDI);
+		parser=new MIDIEvents.createParser(
+			this.tracks[index].getTrackContent(),0,false);
+		event=parser.next();
+		do {
+			events.push(event);
+			event=parser.next();
+		} while(event);
+		return events;
 	};
 
 	// Basic events writting
-	MIDIFile.prototype.setTrackEvents = function() {
-		if(track>=this.tracks.length) {
-			throw Error('Invalid track index ('+track+')');
-		}
-		return this.getEvents(MIDIEvents.EVENT_MIDI);
+	MIDIFile.prototype.setTrackEvents = function(index) {
 	};
 
 	// Remove a track
-	MIDIFile.prototype.deleteTrack = function() {
-		if(track>=this.tracks.length) {
-			throw Error('Invalid track index ('+track+')');
+	MIDIFile.prototype.deleteTrack = function(index) {
+		if(index>this.tracks.length||index<0) {
+			throw Error('Invalid track index ('+index+')');
 		}
 		this.tracks.splice(index,1);
 		this.header.setTracksCount(this.tracks.length);
