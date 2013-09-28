@@ -4,8 +4,8 @@ MIDIFile [![Build Status](https://travis-ci.org/nfroidure/MIDIFile.png?branch=ma
 MIDIFile is a project intended to read/write standard MIDI files with
  JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
 
-MIDIFile can be used int eh folder as global libray or as an AMD module. It can
- also be used with NodeJS by installing the
+MIDIFile can be used as a global libray or as an AMD module. It can
+ also be used with NodeJS by installing the following
   [NPM module](https://npmjs.org/package/midifile) :
 ```bash
 npm install midifile
@@ -15,7 +15,7 @@ What it does
 -------------
 * Read MIDI files
 * Check MIDI file structure (using strictMode)
-*	(Not yet but soon) Write MIDI files
+*	Write MIDI files (still experimental)
 
 What it doesn't do
 -------------

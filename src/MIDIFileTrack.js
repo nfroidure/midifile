@@ -81,11 +81,12 @@
 	MIDIFileTrack.prototype.setTrackContent=function(dataView) {
 		// Calculating the track length
 		var trackLength=dataView.byteLength-dataView.byteOffset;
-		// Track length must size at least like an  empty track (3bytes)
-		if(track<3) {
-			throw Error('Invalid track length, must size at least 3bytes');
+		// Track length must size at least like an  empty track (4bytes)
+		if(trackLength<4) {
+			throw Error('Invalid track length, must size at least 4bytes');
 		}
-		this.datas=new DataView(MIDIFileTrack.HDR_LENGTH+trackLength);
+		this.datas=new DataView(
+			new Uint8Array(MIDIFileTrack.HDR_LENGTH+trackLength).buffer);
 		// Adding the track header (MTrk)
 		this.datas.setUint8(0,0x4D); // M
 		this.datas.setUint8(1,0x54); // T
@@ -94,8 +95,8 @@
 		// Adding the track size
 		this.datas.setUint32(4,trackLength);
 		// Copying the content
-		var origin=new Uint8Array(dataView.buffer, dataView.byteLength,
-				dataView.byteOffset),
+		var origin=new Uint8Array(dataView.buffer, dataView.byteOffset,
+			dataView.byteLength),
 			destination=new Uint8Array(this.datas.buffer,
 				MIDIFileTrack.HDR_LENGTH,
 				trackLength);

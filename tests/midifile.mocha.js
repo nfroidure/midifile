@@ -427,3 +427,17 @@ describe('MIDI file', function(){
 	});
 
 });
+
+describe('MIDI file reencryption loop should work', function(){
+	var mF, events;
+
+	it("with the format 0 MIDI file", function() {
+		var mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat0.mid')));
+		var events=mF.getTrackEvents(0);
+		mF.setTrackEvents(0, events);
+		var newMF=new MIDIFile(mF.getContent());
+		assert.equal(mF.getContent().buffer,newMF.getContent().buffer);
+	});
+
+});

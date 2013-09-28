@@ -192,14 +192,17 @@
 
 	// Basic events writting
 	MIDIFile.prototype.setTrackEvents = function(index, events) {
-		var bufferLength=MIDIEvents.getRequiredBufferLength(events),
-			destination;
+		var bufferLength, destination;
 		if(index>this.tracks.length||index<0) {
 			throw Error('Invalid track index ('+index+')');
 		}
 		if((!events)||(!events.length)) {
 			throw Error('A track must contain at least one event, none given.');
 		}
+		bufferLength=MIDIEvents.getRequiredBufferLength(events);
+		destination = new Uint8Array(bufferLength);
+		MIDIEvents.writeToTrack(events, destination);
+		this.tracks[index].setTrackContent(destination);
 	};
 
 	// Remove a track
@@ -227,13 +230,13 @@
 
 	// Retrieve the content in a buffer
 	MIDIFile.prototype.getContent = function() {
-		var bufferLength, destination, origin;
+		var bufferLength, destination, origin, lastOffset=0;
 		// Calculating the buffer content
 		// - initialize with the header length
 		bufferLength=MIDIFileHeader.HEADER_LENGTH;
 		// - add tracks length
 		for(var i=0, j=this.tracks.length; i<j; i++) {
-			bufferLength=this.tracks[i].getTrackLength()+8;
+			bufferLength+=this.tracks[i].getTrackLength()+8;
 		}
 		// Creating the destination buffer
 		destination=new Uint8Array(bufferLength);
@@ -245,6 +248,14 @@
 			destination[i]=origin[i];
 		}
 		// Adding tracks
+		for(var k=0, l=this.tracks.length; k<l; k++) {
+			origin=new Uint8Array(this.tracks[k].datas.buffer,
+				this.tracks[k].datas.byteOffset,
+				this.tracks[k].datas.byteLength);
+			for(var m=0, n=this.tracks[k].datas.byteLength; m<n; m++) {
+				destination[i++]=origin[m];
+			}
+		}
 		return destination.buffer;
 	};
 

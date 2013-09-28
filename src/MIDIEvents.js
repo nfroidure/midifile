@@ -206,13 +206,13 @@
 							case MIDIEvents.EVENT_META_TIME_SIGNATURE:
 								if(strictMode&&4!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
-								stream.readBytes(event.length);
+								event.data=stream.readBytes(event.length);
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_KEY_SIGNATURE:
 								if(strictMode&&2!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
-								stream.readBytes(event.length);
+								event.data=stream.readBytes(event.length);
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
@@ -245,7 +245,7 @@
 						event.data=stream.readBytes(event.length);
 						return event;
 					}
-				// MIDI events
+				// MIDI eventsdestination[index++]
 				} else {
 					// running status
 					if((eventTypeByte&0x80)==0) {
@@ -267,8 +267,8 @@
 							return event;
 							break;
 						case MIDIEvents.EVENT_MIDI_NOTE_ON:
-							// Could check velocity 0 to switch to off but loosing informations
 							var velocity=stream.readUint8();
+							// If velocity is 0, it's a note off event in fact
 							if(!velocity) {
 								event.subtype=MIDIEvents.EVENT_MIDI_NOTE_OFF;
 								event.param2=127; // Find a standard telling what to do here
@@ -305,6 +305,126 @@
 				}
 			}
 		};
+	};
+
+	// Return the buffer length needed to encode the given events
+	MIDIEvents.writeToTrack=function(events, destination) {
+		var index=0;
+		// Converting each event to binary MIDI datas
+		for(var i=0, j=events.length; i<j; i++) {
+			// Writing delta value
+			if(events[i].delta>>>28) {
+				throw Error('Event delta times maximum reached at index '+i
+					+' ('+events[i].delta+'/134217728 max)');
+			}
+			if(events[i].delta>>>21) {
+				destination[index++]=((events[i].delta>>>21)&0x7F)|0x80;
+			}
+			if(events[i].delta>>>14) {
+				destination[index++]=((events[i].delta>>>14)&0x7F)|0x80;
+			}
+			if(events[i].delta>>>7) {
+				destination[index++]=((events[i].delta>>>7)&0x7F)|0x80;
+			}
+			destination[index++]=(events[i].delta&0x7F);
+			// MIDI Events encoding
+			if(events[i].type===MIDIEvents.EVENT_MIDI) {
+				// Adding the byte of subtype + channel
+				destination[index++]=(events[i].subtype<<4)+events[i].channel
+				// Adding the byte of the first params
+				destination[index++]=events[i].param1;
+				// Adding a byte for the optionnal second param
+				if(-1!==MIDIEvents.MIDI_2PARAMS_EVENTS.indexOf(events[i].subtype)) {
+					destination[index++]=events[i].param2;
+				}
+			// META / SYSEX events encoding
+			} else {
+				// Adding the event type byte
+				destination[index++]=events[i].type;
+				// Adding the META event subtype byte
+				if(events[i].type===MIDIEvents.EVENT_META) {
+					destination[index++]=events[i].subtype;
+				}
+				// Writing the event length bytes
+				if(events[i].length>>>28) {
+					throw Error('Event length maximum reached at index '+i
+						+' ('+events[i].length+'/134217728 max)');
+				}
+				if(events[i].length>>>21) {
+					destination[index++]=((events[i].length>>>21)&0x7F)|0x80;
+				}
+				if(events[i].length>>>14) {
+					destination[index++]=((events[i].length>>>14)&0x7F)|0x80;
+				}
+				if(events[i].length>>>7) {
+					destination[index++]=((events[i].length>>>7)&0x7F)|0x80;
+				}
+				destination[index++]=(events[i].length&0x7F);
+				if(events[i].type===MIDIEvents.EVENT_META) {
+					switch(events[i].subtype) {
+						case MIDIEvents.EVENT_META_SEQUENCE_NUMBER:
+							destination[index++]=events[i].msb;
+							destination[index++]=events[i].lsb;
+							break;
+						case MIDIEvents.EVENT_META_TEXT:
+						case MIDIEvents.EVENT_META_COPYRIGHT_NOTICE:
+						case MIDIEvents.EVENT_META_TRACK_NAME:
+						case MIDIEvents.EVENT_META_INSTRUMENT_NAME:
+						case MIDIEvents.EVENT_META_LYRICS:
+						case MIDIEvents.EVENT_META_MARKER:
+						case MIDIEvents.EVENT_META_CUE_POINT:
+							for(var k=0, l=events[i].length; k<l; k++) {
+								destination[index++]=events[i].text[k].charCodeAt(0);
+							}
+							break;
+						case MIDIEvents.EVENT_META_MIDI_CHANNEL_PREFIX:
+							destination[index++]=events[i].prefix;
+							return event;
+							break;
+						case MIDIEvents.EVENT_META_END_OF_TRACK:
+							break;
+						case MIDIEvents.EVENT_META_SET_TEMPO:
+						  // Temporay, use tempo instead
+							destination[index++]=events[i].v1;
+							destination[index++]=events[i].v2;
+							destination[index++]=events[i].v3;
+							break;
+						case MIDIEvents.EVENT_META_SMTPE_OFFSET:
+							if(strictMode&&event.hour>23)
+								throw new Error(stream.pos()+' Value must be part of 0-23.');
+							destination[index++]=events[i].hour;
+							if(strictMode&&event.minutes>59)
+								throw new Error(stream.pos()+' Value must be part of 0-59.');
+							destination[index++]=events[i].minutes;
+							if(strictMode&&event.seconds>59)
+								throw new Error(stream.pos()+' Value must be part of 0-59.');
+							destination[index++]=events[i].seconds;
+							if(strictMode&&event.frames>30)
+								throw new Error(stream.pos()+' Value must be part of 0-30.');
+							destination[index++]=events[i].frames;
+							if(strictMode&&event.subframes>99)
+								throw new Error(stream.pos()+' Value must be part of 0-99.');
+							destination[index++]=events[i].subframes;
+							return event;
+							break;
+						 // Not implemented
+						case MIDIEvents.EVENT_META_TIME_SIGNATURE:
+						case MIDIEvents.EVENT_META_KEY_SIGNATURE:
+						case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
+						default:
+							for(var k=0, l=events[i].length; k<l; k++) {
+								destination[index++]=events[i].data[k];
+							}
+							break;
+					}
+				// Adding bytes corresponding to the sysex event datas
+				} else {
+					for(var k=0, l=events[i].length; k<l; k++) {
+						destination[index++]=events[i].data[k];
+					}
+				}
+			}
+		}
 	};
 
 	// Return the buffer length needed to encode the given events

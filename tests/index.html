@@ -107,7 +107,9 @@
 			}
 			console.log('Events read, playTime: '+events[events.length-1].playTime
 				+', tracks:'+midiFile.tracks.length+'.');
+			document.getElementById('hexa').contentWindow.postMessage(midiFile.getContent(),'*');
    	}
 	</script>
+	<iframe src="http://hexa.insertafter.com" width="100%" height="800px;" id="hexa"></iframe>
 </body>
 </html>
