@@ -349,7 +349,7 @@ describe('Reading malformed MIDI files in strict mode', function(){
 });
 
 describe('MIDI file', function(){
-	var mF;
+	var mF, events;
 
 	it("creation should work", function() {
 		mF=new MIDIFile();
@@ -371,6 +371,11 @@ describe('MIDI file', function(){
 		mF.deleteTrack(1);
 		assert(mF.tracks.length==mF.header.getTracksCount());
 		assert(mF.tracks.length==3);
+	});
+
+	it("Track events basic reading should work", function() {
+		events=mF.getTrackEvents(1);
+		assert(events.length==1);
 	});
 
 });
