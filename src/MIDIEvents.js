@@ -41,26 +41,26 @@
 	MIDIEvents.EVENT_MIDI_PITCH_BEND=0xE;
 
 	// Create a event stream parser
-	MIDIEvents.createParser=function(stream, startAt, strictMode){
+	MIDIEvents.createParser=function(stream, startAt, strictMode) {
 		// Wrap DataView into a data stream
 		if(stream instanceof DataView) {
 			stream={
 				'position':startAt||0,
 				'buffer':stream,
-				'readUint8':function(){
+				'readUint8':function() {
 					return this.buffer.getUint8(this.position++);
 				},
-				'readUint16':function(){
+				'readUint16':function() {
 					var v=this.buffer.getUint16(this.position);
 					this.position=this.position+2;
 					return v;
 				},
-				'readUint32':function(){
+				'readUint32':function() {
 					var v=this.buffer.getUint16(this.position);
 					this.position=this.position+2;
 					return v;
 				},
-				'readVarInt':function(){
+				'readVarInt':function() {
 					var v=0, i=0;
 					while(i++<4) {
 						var b=this.readUint8();
@@ -74,29 +74,31 @@
 					throw new Error('0x'+this.position.toString(16)+': Variable integer'
 						+' length cannot exceed 4 bytes');
 				},
-				'readText':function(l){
+				'readText':function(l) {
 					var chars=[];
 					for(l; l>0; l--) {
 						chars.push(String.fromCharCode(this.readUint8()));
 					}
 					return chars.join('');
 				},
-				'readBytes':function(l){
+				'readBytes':function(l) {
 					var bytes=[];
 					for(l; l>0; l--) {
 						bytes.push(this.readUint8());
 					}
 					return bytes;
 				},
-				'pos':function(){
+				'pos':function() {
 					return '0x'+(this.buffer.byteOffset+this.position).toString(16);
 				},
-				'end':function(l){
+				'end':function(l) {
 					return this.position===this.buffer.byteLength;
 				}
 			}
+			startAt=0;
+		}
 		// Consume stream till not at start index
-		} else {
+		if(startAt>0) {
 			while(startAt--)
 				stream.readUint8();
 		}
@@ -234,7 +236,7 @@
 				// MIDI events
 				} else {
 					// running status
-					if((eventTypeByte&0x80)==0){
+					if((eventTypeByte&0x80)==0) {
 						if(!(MIDIEventType))
 							throw new Error(stream.pos()+' Running status without previous event');
 						MIDIEventParam1=eventTypeByte;
@@ -305,7 +307,7 @@
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
 		}
-		module.exports=factory.apply(this, deps.map(function(dep){
+		module.exports=factory.apply(this, deps.map(function(dep) {
 			return require(dep);
 		}));
 	}:
@@ -315,7 +317,7 @@
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
 		}
-		this.MIDIEvents=factory.apply(this, deps.map(function(dep){
+		this.MIDIEvents=factory.apply(this, deps.map(function(dep) {
 			return root[dep.substring(dep.lastIndexOf('/')+1)];
 		}));
 	}.bind(this)

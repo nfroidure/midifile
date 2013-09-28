@@ -6,38 +6,61 @@
 // START: Module logic start
 
 	function MIDIFileHeader(buffer, strictMode) {
-		if(!(buffer instanceof ArrayBuffer))
-				throw Error('Invalid buffer received.');
-		this.datas=new DataView(buffer,0,14);
-		// Reading MIDI header chunk
-		if(!('M'===String.fromCharCode(this.datas.getUint8(0))
-			&&'T'===String.fromCharCode(this.datas.getUint8(1))
-			&&'h'===String.fromCharCode(this.datas.getUint8(2))
-			&&'d'===String.fromCharCode(this.datas.getUint8(3))))
-			throw new Error('Invalid MIDIFileHeader : MThd prefix not found');
-		// Reading chunk length
-		if(6!==this.datas.getUint32(4))
-			throw new Error('Invalid MIDIFileHeader : Chunk length must be 6');
+		// No buffer creating him
+		if(!buffer) {
+			var a=new Uint8Array(MIDIFileHeader.HEADER_LENGTH);
+			// Adding the header id (MThd)
+			a[0]=0x4D; a[1]=0x54; a[2]=0x68; a[3]=0x64;
+			// Adding the header chunk size
+			a[4]=0x00; a[5]=0x00; a[6]=0x00; a[7]=0x06;
+			// Adding the file format (1 here cause it's the most commonly used)
+			a[8]=0x00; a[9]=0x01;
+			// Adding the track count (1 cause it's a new file)
+			a[10]=0x00; a[11]=0x01;
+			// Adding the time division (192 ticks per beat)
+			a[12]=0x00; a[13]=0xC0;
+			// saving the buffer
+			this.datas=new DataView(a.buffer,0,MIDIFileHeader.HEADER_LENGTH);
+		// Parsing the given buffer
+		} else {
+			if(!(buffer instanceof ArrayBuffer))
+					throw Error('Invalid buffer received.');
+			this.datas=new DataView(buffer,0,MIDIFileHeader.HEADER_LENGTH);
+			// Reading MIDI header chunk
+			if(!('M'===String.fromCharCode(this.datas.getUint8(0))
+				&&'T'===String.fromCharCode(this.datas.getUint8(1))
+				&&'h'===String.fromCharCode(this.datas.getUint8(2))
+				&&'d'===String.fromCharCode(this.datas.getUint8(3)))) {
+				throw new Error('Invalid MIDIFileHeader : MThd prefix not found');
+			}
+			// Reading chunk length
+			if(6!==this.datas.getUint32(4)) {
+				throw new Error('Invalid MIDIFileHeader : Chunk length must be 6');
+			}
+		}
 	}
 
 	// Static constants
+	MIDIFileHeader.HEADER_LENGTH=14;
 	MIDIFileHeader.FRAMES_PER_SECONDS=1;
 	MIDIFileHeader.TICKS_PER_BEAT=2;
 
 	// MIDI file format
 	MIDIFileHeader.prototype.getFormat=function() {
 		var format=this.datas.getUint16(8);
-		if(0!==format&&1!==format&&2!==format)
+		if(0!==format&&1!==format&&2!==format) {
 			throw new Error('Invalid MIDI file : MIDI format ('+format+'),'
 				+' format can be 0, 1 or 2 only.');
+		}
 		return format;
 	};
 
 	MIDIFileHeader.prototype.setFormat=function(format) {
 		var format=this.datas.getUint16(8);
-		if(0!==format&&1!==format&&2!==format)
+		if(0!==format&&1!==format&&2!==format) {
 			throw new Error('Invalid MIDI format given ('+format+'),'
 				+' format can be 0, 1 or 2 only.');
+		}
 		return format;
 	};
 
@@ -132,7 +155,7 @@
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
 		}
-		module.exports=factory.apply(this, deps.map(function(dep){
+		module.exports=factory.apply(this, deps.map(function(dep) {
 			return require(dep);
 		}));
 	}:
@@ -142,7 +165,7 @@
 		if(typeof name === 'object') {
 			factory=deps; deps=name;
 		}
-		this.MIDIFileHeader=factory.apply(this, deps.map(function(dep){
+		this.MIDIFileHeader=factory.apply(this, deps.map(function(dep) {
 			return root[dep.substring(dep.lastIndexOf('/')+1)];
 		}));
 	}.bind(this)

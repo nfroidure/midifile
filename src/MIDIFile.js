@@ -7,34 +7,47 @@
 // START: Module logic start
 
 	function MIDIFile(buffer, strictMode) {
-		if(!(buffer instanceof ArrayBuffer))
-			throw new Error('Invalid buffer received.');
-		// Minimum MIDI file size is a headerChunk size (14bytes)
-		// and an empty track (8+3bytes)
-		if(buffer.byteLength<25)
-			throw new Error('A buffer of a valid MIDI file must have size at least'
-				+' 25bytes.');
-		// Reading header
-		this.header=new MIDIFileHeader(buffer, strictMode);
-		this.tracks=[];
-		var track;
-		var curIndex=14;
-		// Reading tracks
-		for(var i=0, j=this.header.getTracksCount(); i<j; i++) {
-			// Testing the buffer length
-			if(strictMode&&curIndex>=buffer.byteLength-1)
-				throw new Error('Couldn\'t find datas corresponding to the track #'+i+'.');
-			// Creating the track object
-			var track=new MIDIFileTrack(buffer, curIndex, strictMode);
-			this.tracks.push(track);
-			// Updating index to the track end
-			curIndex+=track.getTrackLength()+8;
+		// If not buffer given, creating a new MIDI file
+		if(!buffer) {
+			// Creating the content
+			this.header=new MIDIFileHeader();
+			this.tracks=[new MIDIFileTrack()];
+		// if a buffer is provided, parsing him
+		} else {
+			if(!(buffer instanceof ArrayBuffer)) {
+				throw new Error('Invalid buffer received.');
+			}
+			// Minimum MIDI file size is a headerChunk size (14bytes)
+			// and an empty track (8+3bytes)
+			if(buffer.byteLength<25) {
+				throw new Error('A buffer of a valid MIDI file must have, at least, a'
+					+' size of 25bytes.');
+			}
+			// Reading header
+			this.header=new MIDIFileHeader(buffer, strictMode);
+			this.tracks=[];
+			var track;
+			var curIndex=14;
+			// Reading tracks
+			for(var i=0, j=this.header.getTracksCount(); i<j; i++) {
+				// Testing the buffer length
+				if(strictMode&&curIndex>=buffer.byteLength-1) {
+					throw new Error('Couldn\'t find datas corresponding to the track #'+i+'.');
+				}
+				// Creating the track object
+				var track=new MIDIFileTrack(buffer, curIndex, strictMode);
+				this.tracks.push(track);
+				// Updating index to the track end
+				curIndex+=track.getTrackLength()+8;
+			}
+			// Testing integrity : curIndex should be at the end of the buffer
+			if(strictMode&&curIndex!=buffer.byteLength) {
+				throw new Error('It seems that the buffer contains too much datas.');
+			}
 		}
-		// Testing integrity : curIndex should be at the end of the buffer
-		if(strictMode&&curIndex!=buffer.byteLength)
-			throw new Error('It seems that the buffer contains too much datas.');
 	}
 
+	// Events reading helpers
 	MIDIFile.prototype.getEvents = function(type, subtype) {
 		var events, event, playTime=0, filteredEvents=[],
 			format=this.header.getFormat(),
@@ -45,7 +58,7 @@
 			for(var i=0, j=this.tracks.length; i<j; i++) {
 				// reset playtime if format is 2
 				playTime=(2==format&&playTime?playTime:0);
-				events=new MIDIEvents.createParser(this.tracks[i].getTrackEvents(),0,false);
+				events=new MIDIEvents.createParser(this.tracks[i].getTrackContent(),0,false);
 				// loooping throught events
 				 while(event=events.next()) {
 				 	playTime+=(event.delta?(event.delta*tickResolution)/1000:0);
@@ -70,7 +83,7 @@
 			for(i=0, j=this.tracks.length; i<j; i++) {
 				trackParsers[i]={};
 				trackParsers[i].parser=new MIDIEvents.createParser(
-						this.tracks[i].getTrackEvents(),0,false);
+						this.tracks[i].getTrackContent(),0,false);
 				trackParsers[i].curEvent=trackParsers[i].parser.next();
 			}
 			// Filling events
@@ -159,6 +172,68 @@
 			return texts;
 		}
 		return [];
+	};
+
+	// Basic events reading
+	MIDIFile.prototype.getTrackEvents = function(track) {
+		if(track>=this.tracks.length) {
+			throw Error('Invalid track index ('+track+')');
+		}
+		return this.getEvents(MIDIEvents.EVENT_MIDI);
+	};
+
+	// Basic events writting
+	MIDIFile.prototype.setTrackEvents = function() {
+		if(track>=this.tracks.length) {
+			throw Error('Invalid track index ('+track+')');
+		}
+		return this.getEvents(MIDIEvents.EVENT_MIDI);
+	};
+
+	// Remove a track
+	MIDIFile.prototype.deleteTrack = function() {
+		if(track>=this.tracks.length) {
+			throw Error('Invalid track index ('+track+')');
+		}
+		this.tracks.splice(index,1);
+		this.header.setTracksCount(this.tracks.length);
+	};
+
+	// Add a track
+	MIDIFile.prototype.addTrack = function(index) {
+		if(index>this.tracks.length||index<0) {
+			throw Error('Invalid track index ('+index+')');
+		}
+		var track = new MIDIFileTrack();
+		if(index==this.tracks.length) {
+			this.tracks.push(track);
+		} else {
+			this.tracks.splice(index,0,track);
+		}
+		this.header.setTracksCount(this.tracks.length);
+	};
+
+	// Retrieve the content in a buffer
+	MIDIFile.prototype.getContent = function() {
+		var bufferLength, destination, origin;
+		// Calculating the buffer content
+		// - initialize with the header length
+		bufferLength=MIDIFileHeader.HEADER_LENGTH;
+		// - add tracks length
+		for(var i=0, j=this.tracks.length; i<j; i++) {
+			bufferLength=this.tracks[i].getTrackLength()+8;
+		}
+		// Creating the destination buffer
+		destination=new Uint8Array(bufferLength);
+		// Adding header
+		origin=new Uint8Array(this.header.datas.buffer,
+			this.header.datas.byteOffset,
+			MIDIFileHeader.HEADER_LENGTH);
+		for(var i=0, j=MIDIFileHeader.HEADER_LENGTH; i<j; i++) {
+			destination[i]=origin[i];
+		}
+		// Adding tracks
+		return destination.buffer;
 	};
 
 // END: Module logic end

@@ -26,7 +26,7 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,1);
 			assert.equal(mF.tracks[0].getTrackLength(),59);
-			var events=mF.tracks[0].getTrackEvents();
+			var events=mF.tracks[0].getTrackContent();
 			assert.equal(events.buffer.byteLength,81);
 			assert.equal(events.byteLength,59);
 			assert.equal(events.byteOffset,22);
@@ -120,25 +120,25 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.tracks.length,4);
 			// Track 1
 			assert.equal(mF.tracks[0].getTrackLength(),20);
-			var events=mF.tracks[0].getTrackEvents();
+			var events=mF.tracks[0].getTrackContent();
 			assert.equal(events.buffer.byteLength,118);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,22);
 			// Track 2
 			assert.equal(mF.tracks[1].getTrackLength(),16);
-			var events=mF.tracks[1].getTrackEvents();
+			var events=mF.tracks[1].getTrackContent();
 			assert.equal(events.buffer.byteLength,118);
 			assert.equal(events.byteLength,16);
 			assert.equal(events.byteOffset,50);
 			// Track 3
 			assert.equal(mF.tracks[2].getTrackLength(),15);
-			var events=mF.tracks[2].getTrackEvents();
+			var events=mF.tracks[2].getTrackContent();
 			assert.equal(events.buffer.byteLength,118);
 			assert.equal(events.byteLength,15);
 			assert.equal(events.byteOffset,74);
 			// Track 4
 			assert.equal(mF.tracks[3].getTrackLength(),21);
-			var events=mF.tracks[3].getTrackEvents();
+			var events=mF.tracks[3].getTrackContent();
 			assert.equal(events.buffer.byteLength,118);
 			assert.equal(events.byteLength,21);
 			assert.equal(events.byteOffset,97);
@@ -154,55 +154,55 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.tracks.length,9);
 			// Track 1
 			assert.equal(mF.tracks[0].getTrackLength(),24);
-			var events=mF.tracks[0].getTrackEvents();
+			var events=mF.tracks[0].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,24);
 			assert.equal(events.byteOffset,22);
 			// Track 2
 			assert.equal(mF.tracks[1].getTrackLength(),20);
-			var events=mF.tracks[1].getTrackEvents();
+			var events=mF.tracks[1].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,54);
 			// Track 3
 			assert.equal(mF.tracks[2].getTrackLength(),20);
-			var events=mF.tracks[2].getTrackEvents();
+			var events=mF.tracks[2].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,82);
 			// Track 4
 			assert.equal(mF.tracks[3].getTrackLength(),20);
-			var events=mF.tracks[3].getTrackEvents();
+			var events=mF.tracks[3].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,110);
 			// Track 5
 			assert.equal(mF.tracks[4].getTrackLength(),20);
-			var events=mF.tracks[4].getTrackEvents();
+			var events=mF.tracks[4].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,138);
 			// Track 6
 			assert.equal(mF.tracks[5].getTrackLength(),20);
-			var events=mF.tracks[5].getTrackEvents();
+			var events=mF.tracks[5].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,166);
 			// Track 7
 			assert.equal(mF.tracks[6].getTrackLength(),20);
-			var events=mF.tracks[6].getTrackEvents();
+			var events=mF.tracks[6].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,194);
 			// Track 8
 			assert.equal(mF.tracks[7].getTrackLength(),20);
-			var events=mF.tracks[7].getTrackEvents();
+			var events=mF.tracks[7].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,222);
 			// Track 9
 			assert.equal(mF.tracks[8].getTrackLength(),20);
-			var events=mF.tracks[8].getTrackEvents();
+			var events=mF.tracks[8].getTrackContent();
 			assert.equal(events.buffer.byteLength,270);
 			assert.equal(events.byteLength,20);
 			assert.equal(events.byteOffset,250);
@@ -217,7 +217,7 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.header.getTicksPerBeat(),96);
 			assert.equal(mF.tracks.length,1);
 			assert.equal(mF.tracks[0].getTrackLength(),109);
-			var events=mF.tracks[0].getTrackEvents();
+			var events=mF.tracks[0].getTrackContent();
 			assert.equal(events.buffer.byteLength,131);
 			assert.equal(events.byteLength,109);
 			assert.equal(events.byteOffset,22);
@@ -246,7 +246,7 @@ describe('Reading well formed MIDI files', function(){
 			assert.equal(mF.header.getTicksPerBeat(),192);
 			assert.equal(mF.tracks.length,1);
 			assert.equal(mF.tracks[0].getTrackLength(),47411);
-			var events=mF.tracks[0].getTrackEvents();
+			var events=mF.tracks[0].getTrackContent();
 			assert.equal(events.buffer.byteLength,47433);
 			assert.equal(events.byteLength,47411);
 			assert.equal(events.byteOffset,22);
@@ -344,6 +344,14 @@ describe('Reading malformed MIDI files in strict mode', function(){
 		} catch(e) {
 			done();
 		}
+	});
+
+});
+
+describe('Create a MIDI file', function(){
+
+	it("Should work", function() {
+		var mF=new MIDIFile();
 	});
 
 });
