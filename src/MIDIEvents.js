@@ -183,23 +183,34 @@
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SMTPE_OFFSET:
-								if(strictMode&&5!==event.length)
+								if(strictMode&&5!==event.length) {
 									throw new Error(stream.pos()+' Bad metaevent length.');
+								}
 								event.hour=stream.readUint8();
-								if(strictMode&&event.hour>23)
-									throw new Error(stream.pos()+' Value must be part of 0-23.');
+								if(strictMode&&event.hour>23) {
+									throw new Error(stream.pos()+' SMTPE offset hour value must'
+										+' be part of 0-23.');
+								}
 								event.minutes=stream.readUint8();
-								if(strictMode&&event.minutes>59)
-									throw new Error(stream.pos()+' Value must be part of 0-59.');
+								if(strictMode&&event.minutes>59) {
+									throw new Error(stream.pos()+' SMTPE offset minutes value'
+										+' must be part of 0-59.');
+								}
 								event.seconds=stream.readUint8();
-								if(strictMode&&event.seconds>59)
-									throw new Error(stream.pos()+' Value must be part of 0-59.');
+								if(strictMode&&event.seconds>59) {
+									throw new Error(stream.pos()+' SMTPE offset seconds value'
+										+' must be part of 0-59.');
+								}
 								event.frames=stream.readUint8();
-								if(strictMode&&event.frames>30)
-									throw new Error(stream.pos()+' Value must be part of 0-30.');
+								if(strictMode&&event.frames>30) {
+									throw new Error(stream.pos()+' SMTPE offset frames value must'
+										+' be part of 0-30.');
+								}
 								event.subframes=stream.readUint8();
-								if(strictMode&&event.subframes>99)
-									throw new Error(stream.pos()+' Value must be part of 0-99.');
+								if(strictMode&&event.subframes>99) {
+									throw new Error(stream.pos()+' SMTPE offset subframes value'
+										+' must be part of 0-99.');
+								}
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_KEY_SIGNATURE:
@@ -399,20 +410,30 @@
 							destination[index++]=events[i].v3;
 							break;
 						case MIDIEvents.EVENT_META_SMTPE_OFFSET:
-							if(strictMode&&event.hour>23)
-								throw new Error('Event #'+i+': Value must be part of 0-23.');
+							if(strictMode&&event.hour>23) {
+								throw new Error('Event #'+i+': SMTPE offset hour value must be'
+									+' part of 0-23.');
+							}
 							destination[index++]=events[i].hour;
-							if(strictMode&&event.minutes>59)
-								throw new Error('Event #'+i+': Value must be part of 0-59.');
+							if(strictMode&&event.minutes>59) {
+								throw new Error('Event #'+i+': SMTPE offset minutes value must'
+									+' be part of 0-59.');
+							}
 							destination[index++]=events[i].minutes;
-							if(strictMode&&event.seconds>59)
-								throw new Error('Event #'+i+': Value must be part of 0-59.');
+							if(strictMode&&event.seconds>59) {
+								throw new Error('Event #'+i+': SMTPE offset seconds value must'
+								+' be part of 0-59.');
+							}
 							destination[index++]=events[i].seconds;
-							if(strictMode&&event.frames>30)
-								throw new Error('Event #'+i+': Value must be part of 0-30.');
+							if(strictMode&&event.frames>30) {
+								throw new Error('Event #'+i+': SMTPE offset frames amount must'
+									+' be part of 0-30.');
+							}
 							destination[index++]=events[i].frames;
-							if(strictMode&&event.subframes>99)
-								throw new Error('Event #'+i+': Value must be part of 0-99.');
+							if(strictMode&&event.subframes>99) {
+								throw new Error('Event #'+i+': SMTPE offset subframes amount'
+									+' must be part of 0-99.');
+							}
 							destination[index++]=events[i].subframes;
 							return event;
 							break;
