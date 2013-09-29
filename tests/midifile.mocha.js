@@ -450,10 +450,10 @@ describe('MIDI file reencryption loop should work', function(){
 
 	function dirEncodingLoop(dirName) {
 		fs.readdirSync(__dirname+'/../sounds/'+dirName).forEach(function(file) {
-			if('Redme.md'!==file) {
-				it('named '+file, function() {
+			if('README.md'!==file) {
+				//it('named '+file, function() {
 					encodingLoop(dirName+'/'+file);
-				});
+				//});
 			}
 		});
 	}
