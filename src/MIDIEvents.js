@@ -202,15 +202,24 @@
 									throw new Error(stream.pos()+' Value must be part of 0-99.');
 								return event;
 								break;
+							case MIDIEvents.EVENT_META_KEY_SIGNATURE:
+								if(strictMode&&2!==event.length) {
+									throw new Error(stream.pos()+' Bad metaevent length.');
+								}
+								event.key=stream.readUint8();
+								if(strictMode&&(event.key<-7||event.key>7)) {
+									throw new Error(stream.pos()+' Bad metaevent length.');
+								}
+								event.scale=stream.readUint8();
+								if(strictMode&&event.scale!==0&&event.scale!==1) {
+									throw new Error(stream.pos()+' Key signature scale value must'
+										+' be 0 or 1.');
+								}
+								return event;
+								break;
 							 // Not implemented
 							case MIDIEvents.EVENT_META_TIME_SIGNATURE:
 								if(strictMode&&4!==event.length)
-									throw new Error(stream.pos()+' Bad metaevent length.');
-								event.data=stream.readBytes(event.length);
-								return event;
-								break;
-							case MIDIEvents.EVENT_META_KEY_SIGNATURE:
-								if(strictMode&&2!==event.length)
 									throw new Error(stream.pos()+' Bad metaevent length.');
 								event.data=stream.readBytes(event.length);
 								return event;
@@ -314,8 +323,8 @@
 		for(var i=0, j=events.length; i<j; i++) {
 			// Writing delta value
 			if(events[i].delta>>>28) {
-				throw Error('Event delta times maximum reached at index '+i
-					+' ('+events[i].delta+'/134217728 max)');
+				throw Error('Event #'+i+': Maximum delta time value reached ('
+					+events[i].delta+'/134217728 max)');
 			}
 			if(events[i].delta>>>21) {
 				destination[index++]=((events[i].delta>>>21)&0x7F)|0x80;
@@ -347,8 +356,8 @@
 				}
 				// Writing the event length bytes
 				if(events[i].length>>>28) {
-					throw Error('Event length maximum reached at index '+i
-						+' ('+events[i].length+'/134217728 max)');
+					throw Error('Event #'+i+': Maximum length reached ('
+						+events[i].length+'/134217728 max)');
 				}
 				if(events[i].length>>>21) {
 					destination[index++]=((events[i].length>>>21)&0x7F)|0x80;
@@ -391,25 +400,38 @@
 							break;
 						case MIDIEvents.EVENT_META_SMTPE_OFFSET:
 							if(strictMode&&event.hour>23)
-								throw new Error(stream.pos()+' Value must be part of 0-23.');
+								throw new Error('Event #'+i+': Value must be part of 0-23.');
 							destination[index++]=events[i].hour;
 							if(strictMode&&event.minutes>59)
-								throw new Error(stream.pos()+' Value must be part of 0-59.');
+								throw new Error('Event #'+i+': Value must be part of 0-59.');
 							destination[index++]=events[i].minutes;
 							if(strictMode&&event.seconds>59)
-								throw new Error(stream.pos()+' Value must be part of 0-59.');
+								throw new Error('Event #'+i+': Value must be part of 0-59.');
 							destination[index++]=events[i].seconds;
 							if(strictMode&&event.frames>30)
-								throw new Error(stream.pos()+' Value must be part of 0-30.');
+								throw new Error('Event #'+i+': Value must be part of 0-30.');
 							destination[index++]=events[i].frames;
 							if(strictMode&&event.subframes>99)
-								throw new Error(stream.pos()+' Value must be part of 0-99.');
+								throw new Error('Event #'+i+': Value must be part of 0-99.');
 							destination[index++]=events[i].subframes;
 							return event;
 							break;
-						 // Not implemented
-						case MIDIEvents.EVENT_META_TIME_SIGNATURE:
 						case MIDIEvents.EVENT_META_KEY_SIGNATURE:
+							if('number'!= typeof events[i].key
+								|| events[i].key<-7 || events[i].scale>7) {
+								throw new Error('Event #'+i+':The key signature key must be'
+									+' between -7 and 7');
+							}
+							if('number'!= typeof events[i].scale
+								|| events[i].scale<0 || events[i].scale>1) {
+								throw new Error('Event #'+i+':The key signature scale must be'
+									+' 0 or 1');
+							}
+							destination[index++]=events[i].key;
+							destination[index++]=events[i].scale;
+							break;
+						// Not implemented
+						case MIDIEvents.EVENT_META_TIME_SIGNATURE:
 						case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
 						default:
 							for(var k=0, l=events[i].length; k<l; k++) {
