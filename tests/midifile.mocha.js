@@ -238,7 +238,7 @@ describe('Reading well formed MIDI files', function(){
 
 	it("Real world MIDI file : Mountain Man", function() {
 		var mF=new MIDIFile(toArrayBuffer(
-			fs.readFileSync(__dirname+'/../sounds/SampleMountainman.mid')));
+			fs.readFileSync(__dirname+'/../sounds/Avgvst/MountainMan.mid')));
 			assert.equal(mF.header.getFormat(),0);
 			assert.equal(mF.header.getTracksCount(),1);
 			assert.equal(mF.header.getTimeDivision(),MIDIFileHeader.TICKS_PER_BEAT);
@@ -429,15 +429,61 @@ describe('MIDI file', function(){
 });
 
 describe('MIDI file reencryption loop should work', function(){
-	var mF, events;
+
+	function encodingLoop(filePath) {
+		var mF, newMF, mFEvents, newMFEvents;
+		mF=new MIDIFile(toArrayBuffer(
+			fs.readFileSync(__dirname+'/../sounds/'+filePath)));
+		mF.tracks.forEach(function(track, index) {
+			var events=mF.getTrackEvents(index);
+			mF.setTrackEvents(index, events);
+		});
+		newMF=new MIDIFile(mF.getContent());
+		mFEvents=mF.getEvents();
+		newMFEvents=mF.getEvents();
+		assert.equal(mFEvents.length,newMFEvents.length);
+		// Testing each events
+		mFEvents.forEach(function(event, index) {
+			assert.deepEqual(event, newMFEvents[index]);
+		});
+	}
+
+	function dirEncodingLoop(dirName) {
+		fs.readdirSync(__dirname+'/../sounds/'+dirName).forEach(function(file) {
+			if('Redme.md'!==file) {
+				it('named '+file, function() {
+					encodingLoop(dirName+'/'+file);
+				});
+			}
+		});
+	}
 
 	it("with the format 0 MIDI file", function() {
-		var mF=new MIDIFile(toArrayBuffer(
-			fs.readFileSync(__dirname+'/../sounds/MIDIOkFormat0.mid')));
-		var events=mF.getTrackEvents(0);
-		mF.setTrackEvents(0, events);
-		var newMF=new MIDIFile(mF.getContent());
-		assert.equal(mF.getContent().buffer,newMF.getContent().buffer);
+		encodingLoop('/../sounds/MIDIOkFormat0.mid');
+	});
+
+	it("with the format 1 MIDI file", function() {
+		encodingLoop('/../sounds/MIDIOkFormat1.mid');
+	});
+
+	it("with the format 2 MIDI file", function() {
+		encodingLoop('/../sounds/MIDIOkFormat2.mid');
+	});
+
+	it("with the Avgvst MIDI files", function() {
+		dirEncodingLoop('Avgvst');
+	});
+
+	it("with the Avgvst MIDI files", function() {
+		dirEncodingLoop('GerardoMarset');
+	});
+
+	it("with the Avgvst MIDI files", function() {
+		dirEncodingLoop('HorrorPen');
+	});
+
+	it("with the Avgvst MIDI files", function() {
+		dirEncodingLoop('Yubatake');
 	});
 
 });
