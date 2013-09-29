@@ -171,14 +171,13 @@
 								return event;
 								break;
 							case MIDIEvents.EVENT_META_SET_TEMPO:
-								if(strictMode&&3!==event.length)
-									throw new Error(stream.pos()+' Bad metaevent length.');
-								event.v1=stream.readUint8();
-								event.v2=stream.readUint8();
-								event.v3=stream.readUint8();
-								event.tempo=((event.v1 << 16)
-									+ (event.v2 << 8)
-									+ event.v3);
+								if(strictMode&&3!==event.length) {
+									throw new Error(stream.pos()+' Tempo meta event length must'
+										+' be 3.');
+								}
+								event.tempo=((stream.readUint8() << 16)
+									+ (stream.readUint8() << 8)
+									+ stream.readUint8());
 								event.tempoBPM=60000000/event.tempo;
 								return event;
 								break;
@@ -404,10 +403,9 @@
 						case MIDIEvents.EVENT_META_END_OF_TRACK:
 							break;
 						case MIDIEvents.EVENT_META_SET_TEMPO:
-						  // Temporay, use tempo instead
-							destination[index++]=events[i].v1;
-							destination[index++]=events[i].v2;
-							destination[index++]=events[i].v3;
+							destination[index++]=(events[i].tempo >> 16);
+							destination[index++]=(events[i].tempo >> 8) & 0xFF;
+							destination[index++]=events[i].tempo & 0xFF;
 							break;
 						case MIDIEvents.EVENT_META_SMTPE_OFFSET:
 							if(strictMode&&event.hour>23) {
