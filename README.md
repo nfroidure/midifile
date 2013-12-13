@@ -4,9 +4,8 @@ MIDIFile [![Build Status](https://travis-ci.org/nfroidure/MIDIFile.png?branch=ma
 MIDIFile is a project intended to read/write standard MIDI files with
  JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
 
-MIDIFile can be used as a global libray or as an AMD module. It can
- also be used with NodeJS by installing the following
-  [NPM module](https://npmjs.org/package/midifile) :
+MIDIFile can be used either in modern browsers or with NodeJS by installing the
+ following [NPM module](https://npmjs.org/package/midifile) :
 ```bash
 npm install midifile
 ```
@@ -85,6 +84,12 @@ ArrayBuffer instances ar the best way to manage binary datas like MIDI files.
 Requirements
 -------------
 * ArrayBuffer, DataView or their polyfills
+
+Contributing
+-------------
+* Feel free to PR
+* If you find a MIDI File the library can't read an if it's under a free, PR
+ the file in the sounds folder and add tests for him. I'll work on it asap.
 
 License
 -------
