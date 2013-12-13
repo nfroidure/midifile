@@ -4,8 +4,10 @@ MIDIFile [![Build Status](https://travis-ci.org/nfroidure/MIDIFile.png?branch=ma
 MIDIFile is a project intended to read/write standard MIDI files with
  JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
 
-MIDIFile can be used either in modern browsers or with NodeJS by installing the
- following [NPM module](https://npmjs.org/package/midifile) :
+MIDIFile can be used either in modern browsers
+ ([pick the last bundle](https://github.com/nfroidure/MIDIFile/blob/master/dist/MIDIFIle.js))
+ or with NodeJS by installing the following
+ [NPM module](https://npmjs.org/package/midifile) :
 ```bash
 npm install midifile
 ```
@@ -21,7 +23,7 @@ What it doesn't do
 *	Playing MIDI files. It's the role of the
  [MIDIPlayer project](https://github.com/nfroidure/MIDIPlayer).
 
-You can find a [Karaoke MIDI player](http://midiwebkaraoke.com) based on
+You can also find a [Karaoke MIDI player](http://midiwebkaraoke.com) based on
  MIDIFile and a very [trivial MIDI player](http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html)
  in the test folder.
 
