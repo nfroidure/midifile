@@ -3,7 +3,7 @@
 // Dependencies
 var MIDIFileHeader = require('./MIDIFileHeader')
   , MIDIFileTrack = require('./MIDIFileTrack')
-  , MIDIEvents = require('./MIDIEvents')
+  , MIDIEvents = require('midievents')
   , UTF8 = require('utf-8')
 ;
 
@@ -274,6 +274,10 @@ MIDIFile.prototype.getContent = function() {
 	}
 	return destination.buffer;
 };
+
+// Exports Track/Header constructors
+MIDIFile.Header = MIDIFileHeader;
+MIDIFile.Track = MIDIFileTrack;
 
 module.exports = MIDIFile;
 

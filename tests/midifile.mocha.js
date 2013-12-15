@@ -1,7 +1,7 @@
 var fs=require('fs'), assert=require('assert'),
 	MIDIFile = require('./../src/MIDIFile.js'),
 	MIDIFileHeader = require('./../src/MIDIFileHeader.js'),
-	MIDIEvents = require('./../src/MIDIEvents.js');
+	MIDIEvents = require('midievents');
 
 // Helper to get an ArrayBuffer from a NodeJS buffer
 // Borrowed here : http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer

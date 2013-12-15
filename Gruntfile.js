@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         browserify: {
             lib: {
                 src: 'src/MIDIFile.js',
-                dest: 'dist/MIDIFIle.js',
+                dest: 'dist/MIDIFile.js',
                 options: {
                     standalone: 'MIDIFile'
                 }
@@ -17,8 +17,8 @@ module.exports = function(grunt) {
 
         watch: {
             code: {
-                files: ['src/**/*.js'],
-                tasks: ['mochaTest']
+                files: ['src/**/*.js', 'tests/**/*.js'],
+                tasks: ['dist', 'mochaTest']
             }
         },
 

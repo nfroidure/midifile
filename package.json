@@ -11,6 +11,7 @@
     "node": "*"
   },
   "dependencies": {
+    "midievents": "~0.1.0",
     "utf-8": "~0.1.0"
   },
   "devDependencies": {
