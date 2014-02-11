@@ -1,7 +1,7 @@
 {
   "name": "midifile",
   "description": "Read/write standard MIDI files.",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "author": "Nicolas Froidure",
   "repository": {
     "type": "git",
@@ -15,7 +15,10 @@
     "utf-8": "~0.1.0"
   },
   "devDependencies": {
-    "mocha": "~1.7.0",
+    "mocha": "~1.17.1",
+    "mocha-lcov-reporter": "0.0.1",
+    "coveralls": "~2.7.1",
+    "istanbul": "~0.2.4",
     "grunt": "~0.4.2",
     "browserify": "~2.36.1",
     "grunt-browserify": "~1.2.12",
@@ -25,7 +28,9 @@
     "matchdep": "~0.3.0"
   },
   "scripts": {
-    "test": "mocha tests/*.mocha.js"
+    "test": "./node_modules/mocha/bin/mocha tests/*.mocha.js",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report html -- tests/*.mocha.js -R spec -t 5000"
   },
   "keywords": [
     "sound",
@@ -36,5 +41,16 @@
     "read",
     "write"
   ],
+  "testling": {
+    "harness" : "mocha",
+    "files": "tests/*.mocha.js",
+    "browsers": {
+      "safari": [ 5.1 ],
+      "opera": [ 12 ],
+      "ie": [ 10 ],
+      "firefox": [ 16 ],
+      "chrome": [ 20 ]
+    }
+  },
   "main": "./src/MIDIFile"
 }
