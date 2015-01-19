@@ -471,6 +471,7 @@ describe('MIDI file reencryption loop should work', function(){
 	});
 
 	it("with the Avgvst MIDI files", function() {
+    this.timeout(4000);
 		dirEncodingLoop('Avgvst');
 	});
 
