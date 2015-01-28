@@ -60,7 +60,7 @@ lyrics[0].playTime; // Time at wich the text must be displayed
 lyrics[0].text; // The text content to be displayed
 
 // Reading whole track events and filtering them yourself
-var trackEventsChunk=midiFile.tracks[0].getTrackEvents(),
+var trackEventsChunk=midiFile.getTrackEvents(0),
 	events=new MIDIFile.createParser(trackEventsChunk),
 	event;
 while(event=events.next()) {
