@@ -50,7 +50,6 @@ MIDIFileHeader.prototype.getFormat=function() {
 };
 
 MIDIFileHeader.prototype.setFormat=function(format) {
-	var format=this.datas.getUint16(8);
 	if(0!==format&&1!==format&&2!==format) {
 		throw new Error('Invalid MIDI format given ('+format+'),'
 			+' format can be 0, 1 or 2 only.');
