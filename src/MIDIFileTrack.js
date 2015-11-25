@@ -61,7 +61,7 @@ MIDIFileTrack.prototype.getTrackLength=function() {
 };
 
 MIDIFileTrack.prototype.setTrackLength=function(trackLength) {
-	return this.datas.setUint32(trackLength);
+	return this.datas.setUint32(4, trackLength);
 };
 
 // Read track contents
