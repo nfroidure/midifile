@@ -1,7 +1,7 @@
 {
   "name": "midifile",
   "description": "Read/write standard MIDI files.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Nicolas Froidure",
   "repository": {
     "type": "git",
