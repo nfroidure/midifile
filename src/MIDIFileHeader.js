@@ -54,7 +54,7 @@ MIDIFileHeader.prototype.setFormat=function(format) {
 		throw new Error('Invalid MIDI format given ('+format+'),'
 			+' format can be 0, 1 or 2 only.');
 	}
-	return format;
+	this.datas.setUint16(8, format);
 };
 
 // Number of tracks
@@ -136,4 +136,3 @@ MIDIFileHeader.prototype.setSMTPEDivision=function(smpteFrames,ticksPerFrame) {
 };
 
 module.exports = MIDIFileHeader;
-
