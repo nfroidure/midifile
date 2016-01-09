@@ -30,7 +30,7 @@ npm install midifile --save
 *	Playing MIDI files. It's the role of the
  [MIDIPlayer project](https://github.com/nfroidure/MIDIPlayer).
 
-You can also find a very [trivial MIDI player](http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html)
+You can also find a very [trivial MIDI player](http://rawgit.com/nfroidure/MIDIFile/master/tests/index.html)
  in the test folder.
 
 ## Browser support
