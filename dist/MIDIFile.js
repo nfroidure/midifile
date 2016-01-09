@@ -818,7 +818,7 @@ function MIDIFile(buffer, strictMode) {
     // Reading header
     this.header = new MIDIFileHeader(buffer, strictMode);
     this.tracks = [];
-    curIndex = 14;
+    curIndex = MIDIFileHeader.HEADER_LENGTH;
     // Reading tracks
     for(i = 0, j = this.header.getTracksCount(); i < j; i++) {
       // Testing the buffer length
