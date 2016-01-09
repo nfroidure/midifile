@@ -462,13 +462,16 @@ describe('MIDI file reencryption loop should work', function() {
       var events = mF.getTrackEvents(index);
       mF.setTrackEvents(index, events);
     });
-    newMF = new MIDIFile(mF.getContent());
+    newMF = new MIDIFile(mF.getContent().slice());
     mFEvents = mF.getEvents();
-    newMFEvents = mF.getEvents();
+    newMFEvents = newMF.getEvents();
     assert.equal(mFEvents.length, newMFEvents.length);
     // Testing each events
     mFEvents.forEach(function(event, index) {
-      assert.deepEqual(event, newMFEvents[index]);
+      // Remove indexes since it is normal they differs
+      delete event.index;
+      delete newMFEvents[index].index;
+      assert.deepEqual(event, newMFEvents[index], 'Same event at index:' + index);
     });
   }
 
@@ -494,19 +497,22 @@ describe('MIDI file reencryption loop should work', function() {
   });
 
   it('with the Avgvst MIDI files', function() {
-    this.timeout(4000);
+    this.timeout(10000);
     dirEncodingLoop('Avgvst');
   });
 
   it('with the Avgvst MIDI files', function() {
+    this.timeout(10000);
     dirEncodingLoop('GerardoMarset');
   });
 
   it('with the Avgvst MIDI files', function() {
+    this.timeout(10000);
     dirEncodingLoop('HorrorPen');
   });
 
   it('with the Avgvst MIDI files', function() {
+    this.timeout(10000);
     dirEncodingLoop('Yubatake');
   });
 
