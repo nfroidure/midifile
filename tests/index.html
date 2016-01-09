@@ -203,13 +203,11 @@
 			}
 			// creating the MidiFile instance
 			midiFile=new MIDIFile(buffer);
-			var events=midiFile.getMidiEvents(), curTime=performance.now();
+			var events=midiFile.getMidiEvents(), curTime=performance.now(), eventBytes = [];
 			for(var i=0, j=events.length; i<j; i++) {
-				midiOutput&&midiOutput.send([
-						(events[i].subtype<<4)+events[i].channel,
-						events[i].param1,
-						(events[i].param2||0x00)
-					], curTime+events[i].playTime);
+				eventBytes = [(events[i].subtype<<4)+events[i].channel, events[i].param1];
+				if (events[i].param2) {eventBytes.push(events[i].param2);}
+				midiOutput&&midiOutput.send(eventBytes, curTime+events[i].playTime);
 			}
 			console.log('Events read, playTime: '+events[events.length-1].playTime
 				+', tracks:'+midiFile.tracks.length+'.');
