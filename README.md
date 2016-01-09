@@ -2,14 +2,23 @@
 > MIDIFile is a project intended to read/write standard MIDI files with
  JavaScript. MIDIFile is fully tested with the 3 existing MIDI formats.
 
-[![NPM version](https://badge.fury.io/js/midifile.png)](https://npmjs.org/package/midifile) [![Build status](https://secure.travis-ci.org/nfroidure/MIDIFile.png)](https://travis-ci.org/nfroidure/MIDIFile) [![Dependency Status](https://david-dm.org/nfroidure/midifile.png)](https://david-dm.org/nfroidure/midifile) [![devDependency Status](https://david-dm.org/nfroidure/midifile/dev-status.png)](https://david-dm.org/nfroidure/midifile#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/nfroidure/MIDIFile/badge.png?branch=master)](https://coveralls.io/r/nfroidure/MIDIFile?branch=master)
+[![NPM version](https://badge.fury.io/js/midifile.svg)](https://npmjs.org/package/midifile)
+[![Build status](https://secure.travis-ci.org/nfroidure/MIDIFile.svg)](https://travis-ci.org/nfroidure/MIDIFile)
+[![Dependency Status](https://david-dm.org/nfroidure/midifile.svg)](https://david-dm.org/nfroidure/midifile)
+[![devDependency Status](https://david-dm.org/nfroidure/midifile/dev-status.svg)](https://david-dm.org/nfroidure/midifile#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/nfroidure/MIDIFile/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/MIDIFile?branch=master)
+
+MIDIFile uses the [MIDIEvents](https://github.com/nfroidure/MIDIEvents) project
+ and is part of the [MIDIPlayer](https://github.com/nfroidure/MIDIPlayer) one.
+ You can also check this [Karaoke Player](http://karaoke.insertafter.com) built
+ on top of those libraries.
 
 MIDIFile can be used either in modern browsers
  ([pick the last bundle](https://github.com/nfroidure/MIDIFile/blob/master/dist/MIDIFIle.js))
  or with NodeJS by installing the following
  [NPM module](https://npmjs.org/package/midifile) :
 ```bash
-npm install midifile
+npm install midifile --save
 ```
 
 ## What it does
@@ -21,12 +30,11 @@ npm install midifile
 *	Playing MIDI files. It's the role of the
  [MIDIPlayer project](https://github.com/nfroidure/MIDIPlayer).
 
-You can also find a [Karaoke MIDI player](http://midiwebkaraoke.com) based on
- MIDIFile and a very [trivial MIDI player](http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html)
+You can also find a very [trivial MIDI player](http://rest4.org/github/nfroidure/MIDIFile/master/tests/index.html)
  in the test folder.
 
 ## Browser support
-[![Build Status](https://ci.testling.com/nfroidure/MIDIFile.png)](https://ci.testling.com/nfroidure/MIDIFile)
+[![Build Status](https://ci.testling.com/nfroidure/MIDIFile.svg)](https://ci.testling.com/nfroidure/MIDIFile)
 
 ## Usage
 ```js
@@ -34,13 +42,13 @@ You can also find a [Karaoke MIDI player](http://midiwebkaraoke.com) based on
 var anyBuffer;
 
 // Creating the MIDIFile instance
-var midiFile= new MIDIFile(anyBuffer);
+var midiFile = new MIDIFile(anyBuffer);
 
 // Reading headers
 midiFile.header.getFormat(); // 0, 1 or 2
 midiFile.header.getTracksCount(); // n
 // Time division
-if(midiFile.header.getTimeDivision()===MIDIFileHeader.TICKS_PER_BEAT) {
+if(midiFile.header.getTimeDivision() === MIDIFileHeader.TICKS_PER_BEAT) {
 	midiFile.header.getTicksPerBit();
 } else {
 	midiFile.header.getSMPTEFrames();
@@ -48,24 +56,25 @@ if(midiFile.header.getTimeDivision()===MIDIFileHeader.TICKS_PER_BEAT) {
 }
 
 // MIDI events retriever
-var events=midiFile.getMidiEvents();
+var events = midiFile.getMidiEvents();
 events[0].subtype; // type of [MIDI event](https://github.com/nfroidure/MIDIFile/blob/master/src/MIDIFile.js#L34)
 events[0].playTime; // time in ms at wich the event must be played
 events[0].param1; // first parameter
 events[0].param2; // second one
 
 // Lyrics retriever
-var lyrics=midiFile.getLyrics();
+var lyrics = midiFile.getLyrics();
 lyrics[0].playTime; // Time at wich the text must be displayed
 lyrics[0].text; // The text content to be displayed
 
 // Reading whole track events and filtering them yourself
-var trackEventsChunk=midiFile.getTrackEvents(0),
-	events=new MIDIFile.createParser(trackEventsChunk),
-	event;
+var trackEventsChunk = midiFile.getTrackEvents(0);
+var	events = new MIDIFile.createParser(trackEventsChunk);
+var event;
+
 while(event=events.next()) {
 	// Printing meta events containing text only
-	if(event.type===MIDIFile.EVENT_META&&event.text) {
+	if(event.type === MIDIFile.EVENT_META && event.text) {
 		console.log('Text meta: '+event.text);
 	}
 }
@@ -79,11 +88,11 @@ mocha tests/*.mocha.js
 ```
 
 ## Why ArrayBuffers ?
-ArrayBuffer instances ar the best way to manage binary datas like MIDI files.
+ArrayBuffer instances are the best way to manage binary data like MIDI files.
 
 ## Why not streams ?
 The Standard MIDI files format isn't streamable by nature. If you want to stream
- midifile contents, you should consider transforming your files in another
+ MIDI file contents, you should consider transforming your files in another
  format (plain linearized MIDI events should do the job).
 
 ## Requirements
@@ -95,4 +104,4 @@ The Standard MIDI files format isn't streamable by nature. If you want to stream
  the file in the sounds folder and add tests for him. I'll work on it asap.
 
 ## License
-Copyright Nicolas Froidure 2013. MIT licence.
+Copyright Nicolas Froidure. MIT licence.

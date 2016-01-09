@@ -1,36 +1,37 @@
 {
   "name": "midifile",
+  "version": "1.0.3",
   "description": "Read/write standard MIDI files.",
-  "version": "1.0.2",
+  "main": "./src/MIDIFile",
   "author": "Nicolas Froidure",
   "repository": {
     "type": "git",
     "url": "http://github.com/nfroidure/MIDIFile.git"
   },
+  "license": "MIT",
   "engines": {
     "node": "*"
   },
   "dependencies": {
-    "midievents": "~1.0.0",
-    "utf-8": "~0.1.2"
+    "midievents": "^1.0.1",
+    "utf-8": "^1.0.0"
   },
   "devDependencies": {
-    "mocha": "~2.1.0",
-    "mocha-lcov-reporter": "0.0.1",
-    "coveralls": "~2.11.2",
-    "istanbul": "~0.3.5",
-    "grunt": "~0.4.5",
-    "browserify": "~8.1.1",
-    "grunt-browserify": "~3.3.0",
-    "grunt-contrib-clean": "~0.6.0",
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt-mocha-test": "~0.12.6",
-    "matchdep": "~0.3.0"
+    "browserify": "^12.0.2",
+    "coveralls": "^2.11.6",
+    "eslint": "^1.10.3",
+    "eslint-config-simplifield": "^1.2.0",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
-    "coveralls": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000"
+    "test": "mocha tests/*.mocha.js",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "cover": "istanbul cover _mocha --report html -- tests/*.mocha.js -R spec -t 5000",
+    "lint": "eslint src/*.js tests/*.js",
+    "preversion": "npm test && npm run lint",
+    "build": "browserify -s MIDIFile src/MIDIFile.js > dist/MIDIFile.js"
   },
   "keywords": [
     "sound",
@@ -44,23 +45,15 @@
   "testling": {
     "harness": "mocha",
     "files": "tests/*.mocha.js",
-    "browsers": {
-      "safari": [
-        5.1
-      ],
-      "opera": [
-        12
-      ],
-      "ie": [
-        10
-      ],
-      "firefox": [
-        16
-      ],
-      "chrome": [
-        20
-      ]
-    }
-  },
-  "main": "./src/MIDIFile"
+    "browsers": [
+      "ie/6..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  }
 }
