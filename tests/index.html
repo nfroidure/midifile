@@ -13,7 +13,8 @@
 		<h1>MidiFile.js &amp; WEBMIDI API based sample MIDI player</h1>
 		<h2>Test MidiFile.js</h2>
 		<p>
-			In order to test this MIDI player, you must download the
+			In order to test this MIDI player in a browser lacking MIDI support, you
+				must download the
 			<a href="http://jazz-soft.net/download/Jazz-Plugin/">Jazz Midi Plugin</a>.
 		</p>
 		<p>
@@ -163,7 +164,7 @@
 		function readFile(input) {
 			var reader = new FileReader();
 			reader.readAsArrayBuffer(input.files[0]);
-			reader.onloadend=function(event) {
+			reader.onloadend = function(event) {
 				playFile(event.target.result);
    		}
    	}
@@ -178,7 +179,7 @@
 			};
 			oReq.send(null);
    	}
-   
+
    // file player
 		var midiFile, m;
 		function playFile(buffer) {
@@ -196,22 +197,22 @@
 				} else {
 					console.log("No MIDI output devices connected.");
 				}
-				
-				
 			} else {
 				console.log('No access to MIDI output.');
 			}
 			// creating the MidiFile instance
-			midiFile=new MIDIFile(buffer);
-			var events=midiFile.getMidiEvents(), curTime=performance.now(), eventBytes = [];
-			for(var i=0, j=events.length; i<j; i++) {
-				eventBytes = [(events[i].subtype<<4)+events[i].channel, events[i].param1];
+			midiFile = new MIDIFile(buffer);
+			var events = midiFile.getMidiEvents();
+			var curTime = performance.now();
+			var eventBytes  =  [];
+			for(var i = 0, j = events.length; i < j; i++) {
+				eventBytes = [(events[i].subtype << 4) + events[i].channel, events[i].param1];
 				if (events[i].param2) {eventBytes.push(events[i].param2);}
-				midiOutput&&midiOutput.send(eventBytes, curTime+events[i].playTime);
+				midiOutput && midiOutput.send(eventBytes, curTime + events[i].playTime);
 			}
-			console.log('Events read, playTime: '+events[events.length-1].playTime
-				+', tracks:'+midiFile.tracks.length+'.');
-			document.getElementById('hexa').contentWindow.postMessage(midiFile.getContent(),'*');
+			console.log('Events read, playTime: ' + events[events.length - 1].playTime +
+				', tracks:' + midiFile.tracks.length + '.');
+			document.getElementById('hexa').contentWindow.postMessage(midiFile.getContent(), '*');
    	}
 	</script>
 	<iframe src="http://hexa.insertafter.com" width="100%" height="800px;" id="hexa"></iframe>
