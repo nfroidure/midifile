@@ -69,9 +69,9 @@ lyrics[0].text; // The text content to be displayed
 
 // Reading whole track events and filtering them yourself
 var trackEventsChunk = midiFile.getTrackEvents(0);
-var	events = new MIDIFile.createParser(trackEventsChunk);
-var event;
+var events = MIDIEvents.createParser(trackEventsChunk);
 
+var event;
 while(event=events.next()) {
 	// Printing meta events containing text only
 	if(event.type === MIDIFile.EVENT_META && event.text) {
