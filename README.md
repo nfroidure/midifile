@@ -74,7 +74,7 @@ var events = MIDIEvents.createParser(trackEventsChunk);
 var event;
 while(event=events.next()) {
 	// Printing meta events containing text only
-	if(event.type === MIDIFile.EVENT_META && event.text) {
+	if(event.type === MIDIEvents.EVENT_META && event.text) {
 		console.log('Text meta: '+event.text);
 	}
 }
