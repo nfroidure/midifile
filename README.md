@@ -68,11 +68,16 @@ lyrics[0].playTime; // Time at wich the text must be displayed
 lyrics[0].text; // The text content to be displayed
 
 // Reading whole track events and filtering them yourself
-var trackEventsChunk = midiFile.getTrackEvents(0);
+var events = midiFile.getTrackEvents(0);
+
+events.forEach(console.log.bind(console);
+
+// Or for a single track
+var trackEventsChunk = midiFile.tracks[0].getTrackContent();
 var events = MIDIEvents.createParser(trackEventsChunk);
 
 var event;
-while(event=events.next()) {
+while(event = events.next()) {
 	// Printing meta events containing text only
 	if(event.type === MIDIEvents.EVENT_META && event.text) {
 		console.log('Text meta: '+event.text);
