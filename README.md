@@ -49,7 +49,7 @@ midiFile.header.getFormat(); // 0, 1 or 2
 midiFile.header.getTracksCount(); // n
 // Time division
 if(midiFile.header.getTimeDivision() === MIDIFileHeader.TICKS_PER_BEAT) {
-	midiFile.header.getTicksPerBit();
+	midiFile.header.getTicksPerBeat();
 } else {
 	midiFile.header.getSMPTEFrames();
 	midiFile.header.getTicksPerFrame();
@@ -64,13 +64,15 @@ events[0].param2; // second one
 
 // Lyrics retriever
 var lyrics = midiFile.getLyrics();
-lyrics[0].playTime; // Time at wich the text must be displayed
-lyrics[0].text; // The text content to be displayed
+if ( lyrics.length ) {
+	lyrics[0].playTime; // Time at wich the text must be displayed
+	lyrics[0].text; // The text content to be displayed
+}
 
 // Reading whole track events and filtering them yourself
 var events = midiFile.getTrackEvents(0);
 
-events.forEach(console.log.bind(console);
+events.forEach(console.log.bind(console));
 
 // Or for a single track
 var trackEventsChunk = midiFile.tracks[0].getTrackContent();
