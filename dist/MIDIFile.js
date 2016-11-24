@@ -870,7 +870,7 @@ MIDIFile.prototype.getEvents = function(type, subtype) {
         }
         // push the asked events
         if(((!type) || event.type === type) &&
-          ((!subtype) || (event.subtype && event.subtype === type))) {
+          ((!subtype) || (event.subtype && event.subtype === subtype))) {
           event.playTime = playTime;
           filteredEvents.push(event);
         }
@@ -919,7 +919,7 @@ MIDIFile.prototype.getEvents = function(type, subtype) {
         }
         // push midi events
         if(((!type) || event.type === type) &&
-          ((!subtype) || (event.subtype && event.subtype === type))) {
+          ((!subtype) || (event.subtype && event.subtype === subtype))) {
           event.playTime = playTime;
           event.track = smallestDelta;
           filteredEvents.push(event);
