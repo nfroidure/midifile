@@ -15,7 +15,7 @@ function toArrayBuffer(buffer) {
   var view = new Uint8Array(ab);
   var i;
 
-  for (i = 0; i < buffer.length; ++i) {
+  for(i = 0; i < buffer.length; ++i) {
     view[i] = buffer[i];
   }
   return ab;

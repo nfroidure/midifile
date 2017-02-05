@@ -2,7 +2,7 @@
 
 // MIDIFileHeader : Read and edit a MIDI header chunk in a given ArrayBuffer
 function MIDIFileHeader(buffer) {
-  var a;
+  let a;
   // No buffer creating him
   if(!buffer) {
     a = new Uint8Array(MIDIFileHeader.HEADER_LENGTH);
@@ -47,7 +47,7 @@ MIDIFileHeader.TICKS_PER_BEAT = 2;
 
 // MIDI file format
 MIDIFileHeader.prototype.getFormat = function() {
-  var format = this.datas.getUint16(8);
+  const format = this.datas.getUint16(8);
   if(0 !== format && 1 !== format && 2 !== format) {
     throw new Error('Invalid MIDI file : MIDI format (' + format + '),' +
       ' format can be 0, 1 or 2 only.');
@@ -107,8 +107,8 @@ MIDIFileHeader.prototype.setTicksPerBeat = function(ticksPerBeat) {
 
 // Frames per seconds
 MIDIFileHeader.prototype.getSMPTEFrames = function() {
-  var divisionWord = this.datas.getUint16(12);
-  var smpteFrames;
+  const divisionWord = this.datas.getUint16(12);
+  let smpteFrames;
 
   if(!(divisionWord & 0x8000)) {
     throw new Error('Time division is not expressed as frames per seconds.');
@@ -121,7 +121,7 @@ MIDIFileHeader.prototype.getSMPTEFrames = function() {
 };
 
 MIDIFileHeader.prototype.getTicksPerFrame = function() {
-  var divisionWord = this.datas.getUint16(12);
+  const divisionWord = this.datas.getUint16(12);
 
   if(!(divisionWord & 0x8000)) {
     throw new Error('Time division is not expressed as frames per seconds.');

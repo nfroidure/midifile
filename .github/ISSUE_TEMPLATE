@@ -1,0 +1,37 @@
+<!--
+
+Thanks for reporting an issue.
+
+Before doing so, there are a few checks to do in
+ order to optimize its resolution. Just fill in the
+ following template.
+
+Beware that you also can create a pull request
+ if you know how to solve the issue.
+
+-->
+
+I'm a gentledev i:
+[ ] fully read the README recently
+[ ] searched for existing issues
+[ ] checked i'm up to date with the latest version of the project
+
+### Expected behavior
+
+### Actual behavior
+
+### Steps to reproduce the behavior
+
+### Debugging informations
+- `node -v` result:
+```
+<paste here>
+```
+
+- `npm -v` result:
+```
+<paste here>
+```
+If the result is lower than 6.9.5, there is
+ poor chances i even have a look to it. Please,
+ use the last [NodeJS LTS version](https://nodejs.org/en/).

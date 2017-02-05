@@ -1,0 +1,39 @@
+<!--
+
+Thanks for improving this project!
+
+Before doing so, there are a few checks to do in
+ order to get your PR merged asap. Just fill in the
+ following template.
+
+-->
+
+Fixes #
+
+### Proposed changes
+-
+-
+
+### Code quality
+[ ] I made some tests for my changes
+
+<!--
+
+If you already maintain several NPM modules / NodeJS
+ project, making significant changes on one of my modules
+ automatically legitimates you as a core developer.
+
+This is because i could die or even not give a shit to
+ this project someday and i don't want people to get
+ stuck.
+
+If you want to help, fill the following with to get
+GitHub/NPM r/w access.
+
+-->
+### Join
+[ ] I wish to join the core team
+[ ] I agree that with great powers comes responsibilities
+[ ] I'm a nice person
+
+My NPM username: 

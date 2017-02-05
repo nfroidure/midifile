@@ -2,36 +2,48 @@
   "name": "midifile",
   "version": "1.0.4",
   "description": "Read/write standard MIDI files.",
-  "main": "./src/MIDIFile",
+  "main": "src/MIDIFile",
   "author": "Nicolas Froidure",
+  "metapak": {
+    "data": {
+      "files": "src/*.js tests/*.mocha.js",
+      "testsFiles": "tests/*.mocha.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/nfroidure/MIDIFile.git"
   },
   "license": "MIT",
   "engines": {
-    "node": "*"
+    "node": ">=6.9.5"
   },
   "dependencies": {
+    "debug": "1.0.0",
     "midievents": "^1.0.1",
     "utf-8": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^12.0.2",
-    "coveralls": "^2.11.6",
-    "eslint": "^1.10.3",
-    "eslint-config-simplifield": "^1.2.0",
-    "istanbul": "^0.4.1",
-    "mocha": "^2.3.4",
-    "mocha-lcov-reporter": "^1.0.0"
+    "coveralls": "2.11.15",
+    "eslint": "3.4.0",
+    "eslint-config-simplifield": "4.1.1",
+    "istanbul": "0.4.5",
+    "metapak": "0.0.13",
+    "metapak-nfroidure": "0.0.9",
+    "mocha": "3.2.0",
+    "mocha-lcov-reporter": "1.2.0"
   },
   "scripts": {
-    "test": "mocha tests/*.mocha.js",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "build": "browserify -s MIDIFile src/MIDIFile.js > dist/MIDIFile.js",
+    "cli": "env NODE_ENV=${NODE_ENV:-cli}",
     "cover": "istanbul cover _mocha --report html -- tests/*.mocha.js -R spec -t 5000",
-    "lint": "eslint src/*.js tests/*.js",
-    "preversion": "npm test && npm run lint",
-    "build": "browserify -s MIDIFile src/MIDIFile.js > dist/MIDIFile.js"
+    "coveralls": "istanbul cover _mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "lint": "eslint src/*.js tests/*.mocha.js",
+    "metapak": "metapak || echo 'Please `npm install --save-dev metapak`' exit 0",
+    "postinstall": "npm run metapak",
+    "preversion": "npm t && npm run lint",
+    "test": "mocha tests/*.mocha.js"
   },
   "keywords": [
     "sound",
