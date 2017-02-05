@@ -33,9 +33,6 @@ npm install midifile --save
 You can also find a very [trivial MIDI player](http://rawgit.com/nfroidure/MIDIFile/master/tests/index.html)
  in the test folder.
 
-## Browser support
-[![Build Status](https://ci.testling.com/nfroidure/MIDIFile.svg)](https://ci.testling.com/nfroidure/MIDIFile)
-
 ## Usage
 ```js
 // Your variable with a ArrayBuffer instance containing your MIDI file

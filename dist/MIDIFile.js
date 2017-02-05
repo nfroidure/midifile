@@ -1104,7 +1104,7 @@ module.exports = MIDIFile;
 
 // MIDIFileHeader : Read and edit a MIDI header chunk in a given ArrayBuffer
 function MIDIFileHeader(buffer) {
-  var a;
+  let a;
   // No buffer creating him
   if(!buffer) {
     a = new Uint8Array(MIDIFileHeader.HEADER_LENGTH);
@@ -1149,7 +1149,7 @@ MIDIFileHeader.TICKS_PER_BEAT = 2;
 
 // MIDI file format
 MIDIFileHeader.prototype.getFormat = function() {
-  var format = this.datas.getUint16(8);
+  const format = this.datas.getUint16(8);
   if(0 !== format && 1 !== format && 2 !== format) {
     throw new Error('Invalid MIDI file : MIDI format (' + format + '),' +
       ' format can be 0, 1 or 2 only.');
@@ -1209,8 +1209,8 @@ MIDIFileHeader.prototype.setTicksPerBeat = function(ticksPerBeat) {
 
 // Frames per seconds
 MIDIFileHeader.prototype.getSMPTEFrames = function() {
-  var divisionWord = this.datas.getUint16(12);
-  var smpteFrames;
+  const divisionWord = this.datas.getUint16(12);
+  let smpteFrames;
 
   if(!(divisionWord & 0x8000)) {
     throw new Error('Time division is not expressed as frames per seconds.');
@@ -1223,7 +1223,7 @@ MIDIFileHeader.prototype.getSMPTEFrames = function() {
 };
 
 MIDIFileHeader.prototype.getTicksPerFrame = function() {
-  var divisionWord = this.datas.getUint16(12);
+  const divisionWord = this.datas.getUint16(12);
 
   if(!(divisionWord & 0x8000)) {
     throw new Error('Time division is not expressed as frames per seconds.');
@@ -1252,8 +1252,8 @@ module.exports = MIDIFileHeader;
 
 // MIDIFileTrack : Read and edit a MIDI track chunk in a given ArrayBuffer
 function MIDIFileTrack(buffer, start) {
-  var a;
-  var trackLength;
+  let a;
+  let trackLength;
 
   // no buffer, creating him
   if(!buffer) {
@@ -1298,13 +1298,13 @@ function MIDIFileTrack(buffer, start) {
     this.datas = new DataView(buffer, start, MIDIFileTrack.HDR_LENGTH + trackLength);
     // Trying to find the end of track event
     if(!(
-      0xFF === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + trackLength - 3) &&
-      0x2F === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + trackLength - 2) &&
-      0x00 === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + trackLength - 1)
+      0xFF === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 3)) &&
+      0x2F === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 2)) &&
+      0x00 === this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 1))
     )) {
       throw new Error('Invalid MIDIFileTrack (0x' + start.toString(16) + ') :' +
         ' No track end event found at the expected index' +
-        ' (' + (MIDIFileTrack.HDR_LENGTH + trackLength - 1).toString(16) + ').');
+        ' (' + (MIDIFileTrack.HDR_LENGTH + (trackLength - 1)).toString(16) + ').');
     }
   }
 }
@@ -1330,12 +1330,13 @@ MIDIFileTrack.prototype.getTrackContent = function() {
 
 // Set track content
 MIDIFileTrack.prototype.setTrackContent = function(dataView) {
-  var origin;
-  var destination;
-  var i;
-  var j;
+  let origin;
+  let destination;
+  let i;
+  let j;
   // Calculating the track length
-  var trackLength = dataView.byteLength - dataView.byteOffset;
+  const trackLength = dataView.byteLength - dataView.byteOffset;
+
   // Track length must size at least like an  empty track (4bytes)
   if(4 > trackLength) {
     throw new Error('Invalid track length, must size at least 4bytes');
