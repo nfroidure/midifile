@@ -45,7 +45,7 @@ var midiFile = new MIDIFile(anyBuffer);
 midiFile.header.getFormat(); // 0, 1 or 2
 midiFile.header.getTracksCount(); // n
 // Time division
-if(midiFile.header.getTimeDivision() === MIDIFileHeader.TICKS_PER_BEAT) {
+if(midiFile.header.getTimeDivision() === MIDIFile.Header.TICKS_PER_BEAT) {
 	midiFile.header.getTicksPerBeat();
 } else {
 	midiFile.header.getSMPTEFrames();
