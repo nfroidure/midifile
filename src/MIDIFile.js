@@ -8,6 +8,20 @@ var MIDIFileTrack = require('./MIDIFileTrack');
 var MIDIEvents = require('midievents');
 var UTF8 = require('utf-8');
 
+
+function ensureArrayBuffer(buf) {
+  if (buf) {
+    if (buf instanceof ArrayBuffer) { return buf; }
+    if (buf instanceof Uint8Array) {
+      // Copy/convert to standard Uint8Array, because derived classes like
+      // node.js Buffers might have unexpected data in the .buffer property.
+      return new Uint8Array(buf).buffer;
+    }
+  }
+  throw new Error('Unsupported buffer type, need ArrayBuffer or Uint8Array');
+}
+
+
 // Constructor
 function MIDIFile(buffer, strictMode) {
   var track;
@@ -22,9 +36,7 @@ function MIDIFile(buffer, strictMode) {
     this.tracks = [new MIDIFileTrack()];
   // if a buffer is provided, parsing him
   } else {
-    if(!(buffer instanceof ArrayBuffer)) {
-      throw new Error('Invalid buffer received.');
-    }
+    buffer = ensureArrayBuffer(buffer);
     // Minimum MIDI file size is a headerChunk size (14bytes)
     // and an empty track (8+3bytes)
     if(25 > buffer.byteLength) {

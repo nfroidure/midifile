@@ -4,6 +4,9 @@
   "description": "Read/write standard MIDI files.",
   "main": "src/MIDIFile",
   "author": "Nicolas Froidure",
+  "contributors": [
+    "M.K. (https://github.com/mk-pmb)"
+  ],
   "metapak": {
     "data": {
       "files": "src/*.js tests/*.mocha.js",
