@@ -269,6 +269,11 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events.byteLength, 47411);
     assert.equal(events.byteOffset, 22);
   });
+
+  it('MIDI data from a Node.js buffer', function() {
+    var data = 'TVRoZAAAAAYAAQABAeBNVHJrAAAAFAD/BAAAwAAAkEVVkmCARVUA/y8A';
+    new MIDIFile(Buffer.from(data, 'base64'));
+  });
 });
 
 

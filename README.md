@@ -35,7 +35,7 @@ You can also find a very [trivial MIDI player](http://rawgit.com/nfroidure/MIDIF
 
 ## Usage
 ```js
-// Your variable with a ArrayBuffer instance containing your MIDI file
+// Your variable with your MIDI file as an ArrayBuffer or UInt8Array instance
 var anyBuffer;
 
 // Creating the MIDIFile instance
