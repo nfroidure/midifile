@@ -18,8 +18,8 @@
 
 [//]: # (::contents:start)
 
-MIDIFile uses the [MIDIEvents](https://github.com/nfroidure/MIDIEvents) project
- and is part of the [MIDIPlayer](https://github.com/nfroidure/MIDIPlayer) one.
+MIDIFile uses the [MIDIEvents](https://github.com/nfroidure/midievents) project
+ and is part of the [MIDIPlayer](https://github.com/nfroidure/midiplayer) one.
  You can also check this [Karaoke Player](http://karaoke.insertafter.com) built
  on top of those libraries.
 
@@ -30,10 +30,7 @@ MIDIFile uses the [MIDIEvents](https://github.com/nfroidure/MIDIEvents) project
 
 ## What it doesn't do
 *	Playing MIDI files. It's the role of the
- [MIDIPlayer project](https://github.com/nfroidure/MIDIPlayer).
-
-You can also find a very [trivial MIDI player](http://rawgit.com/nfroidure/MIDIFile/master/tests/index.html)
- in the test folder.
+ [MIDIPlayer project](https://github.com/nfroidure/midiplayer).
 
 ## Usage
 ```js
