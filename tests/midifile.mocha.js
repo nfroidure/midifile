@@ -15,7 +15,7 @@ function toArrayBuffer(buffer) {
   var view = new Uint8Array(ab);
   var i;
 
-  for(i = 0; i < buffer.length; ++i) {
+  for (i = 0; i < buffer.length; ++i) {
     view[i] = buffer[i];
   }
   return ab;
@@ -23,12 +23,15 @@ function toArrayBuffer(buffer) {
 
 // Tests
 describe('Reading well formed MIDI files', function() {
-
   it('Format 0 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat0.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat0.mid')
+        )
+      )
+    );
 
     assert.equal(mF.header.getFormat(), 0);
     assert.equal(mF.header.getTracksCount(), 1);
@@ -54,16 +57,16 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events[1].index, 0x28);
     assert.equal(events[1].delta, 0);
     assert.equal(events[1].channel, 1);
-    assert.equal(events[1].param1, 0x2E);
+    assert.equal(events[1].param1, 0x2e);
     assert.equal(events[2].type, MIDIEvents.EVENT_MIDI);
     assert.equal(events[2].subtype, MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE);
-    assert.equal(events[2].index, 0x2B);
+    assert.equal(events[2].index, 0x2b);
     assert.equal(events[2].delta, 0);
     assert.equal(events[2].channel, 2);
     assert.equal(events[2].param1, 0x46);
     assert.equal(events[3].type, MIDIEvents.EVENT_MIDI);
     assert.equal(events[3].subtype, MIDIEvents.EVENT_MIDI_NOTE_ON);
-    assert.equal(events[3].index, 0x2E);
+    assert.equal(events[3].index, 0x2e);
     assert.equal(events[3].delta, 0);
     assert.equal(events[3].channel, 2);
     assert.equal(events[3].param1, 0x30);
@@ -73,7 +76,7 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events[4].index, 0x32);
     assert.equal(events[4].delta, 0);
     assert.equal(events[4].channel, 2);
-    assert.equal(events[4].param1, 0x3C);
+    assert.equal(events[4].param1, 0x3c);
     assert.equal(events[4].param2, 0x60);
     assert.equal(events[5].type, MIDIEvents.EVENT_MIDI);
     assert.equal(events[5].subtype, MIDIEvents.EVENT_MIDI_NOTE_ON);
@@ -87,11 +90,11 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events[6].index, 0x39);
     assert.equal(events[6].delta, 0x60);
     assert.equal(events[6].channel, 0);
-    assert.equal(events[6].param1, 0x4C);
+    assert.equal(events[6].param1, 0x4c);
     assert.equal(events[6].param2, 0x20);
     assert.equal(events[7].type, MIDIEvents.EVENT_MIDI);
     assert.equal(events[7].subtype, MIDIEvents.EVENT_MIDI_NOTE_OFF);
-    assert.equal(events[7].index, 0x3D);
+    assert.equal(events[7].index, 0x3d);
     assert.equal(events[7].delta, 192); // 2 bytes delta time
     assert.equal(events[7].channel, 2);
     assert.equal(events[7].param1, 0x30);
@@ -101,7 +104,7 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events[8].index, 0x42);
     assert.equal(events[8].delta, 0x00);
     assert.equal(events[8].channel, 2);
-    assert.equal(events[8].param1, 0x3C);
+    assert.equal(events[8].param1, 0x3c);
     assert.equal(events[8].param2, 0x40);
     assert.equal(events[9].type, MIDIEvents.EVENT_MIDI);
     assert.equal(events[9].subtype, MIDIEvents.EVENT_MIDI_NOTE_OFF);
@@ -115,15 +118,19 @@ describe('Reading well formed MIDI files', function() {
     assert.equal(events[10].index, 0x49);
     assert.equal(events[10].delta, 0x00);
     assert.equal(events[10].channel, 0);
-    assert.equal(events[10].param1, 0x4C);
+    assert.equal(events[10].param1, 0x4c);
     assert.equal(events[10].param2, 0x40);
   });
 
   it('Format 1 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1.mid')
+        )
+      )
+    );
     assert.equal(mF.header.getFormat(), 1);
     assert.equal(mF.header.getTracksCount(), 4);
     assert.equal(mF.header.getTimeDivision(), MIDIFileHeader.TICKS_PER_BEAT);
@@ -157,9 +164,13 @@ describe('Reading well formed MIDI files', function() {
 
   it('Format 2 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat2.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat2.mid')
+        )
+      )
+    );
     assert.equal(mF.header.getFormat(), 2);
     assert.equal(mF.header.getTracksCount(), 9);
     assert.equal(mF.header.getTimeDivision(), MIDIFileHeader.TICKS_PER_BEAT);
@@ -224,9 +235,13 @@ describe('Reading well formed MIDI files', function() {
   it('Karaoke MIDI file', function() {
     var events;
     var lyrics;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1-lyrics.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1-lyrics.mid')
+        )
+      )
+    );
     assert.equal(mF.header.getFormat(), 1);
     assert.equal(mF.header.getTracksCount(), 1);
     assert.equal(mF.header.getTimeDivision(), MIDIFileHeader.TICKS_PER_BEAT);
@@ -255,9 +270,13 @@ describe('Reading well formed MIDI files', function() {
 
   it('Real world MIDI file : Mountain Man', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'Avgvst', 'MountainMan.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'Avgvst', 'MountainMan.mid')
+        )
+      )
+    );
     assert.equal(mF.header.getFormat(), 0);
     assert.equal(mF.header.getTracksCount(), 1);
     assert.equal(mF.header.getTimeDivision(), MIDIFileHeader.TICKS_PER_BEAT);
@@ -276,147 +295,209 @@ describe('Reading well formed MIDI files', function() {
   });
 });
 
-
 describe('Reading invalid MIDI files', function() {
-
   it('Should fail when the header chunk is bad', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderChunk.mid'))
-      ));
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderChunk.mid')
+          )
+        )
+      );
     });
   });
 
   it('Should fail when the MIDI format is invalid', function() {
     assert.throws(function() {
-      var mF = new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderFormat.mid'))
-      ));
+      var mF = new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderFormat.mid')
+          )
+        )
+      );
       mF.header.getFormat();
     });
   });
 
   it('Should fail when the header chunk is bad', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderChunk.mid'))
-      ));
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderChunk.mid')
+          )
+        )
+      );
     });
   });
 
   it('Should fail when the header length is bad', function() {
     assert.throws(function() {
-      var mF = new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderLength.mid'))
-      ));
+      var mF = new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderLength.mid')
+          )
+        )
+      );
       mF.getFormat();
     });
   });
 
   it('Should fail when the header chunk is bad', function() {
     assert.throws(function() {
-      var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderSmtp.mid'))));
+      var mF = new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderSmtp.mid')
+          )
+        )
+      );
       mF.header.getSMPTEFrames();
     });
   });
 
   it('Should fail when tracks count is not corresponding to the real track count', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderTracksNum.mid'))
-      ), true);
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderTracksNum.mid')
+          )
+        ),
+        true
+      );
     });
   });
 
   it('Should fail when the track header is bad', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadTrackHdr.mid'))
-      ));
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadTrackHdr.mid')
+          )
+        )
+      );
     });
   });
 
   it('Should fail when the track length is bad', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadTrackLength.mid'))
-      ));
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadTrackLength.mid')
+          )
+        )
+      );
     });
   });
-
 });
 
 describe('Reading malformed MIDI files in strict mode', function() {
-
   it('Should fail when tracks count is not corresponding to the real track count', function() {
     assert.throws(function() {
-      new MIDIFile(toArrayBuffer(
-        fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderTracksNum.mid'))
-      ), true);
+      new MIDIFile(
+        toArrayBuffer(
+          fs.readFileSync(
+            path.join(__dirname, '..', 'sounds', 'MIDIBadHeaderTracksNum.mid')
+          )
+        ),
+        true
+      );
     });
   });
-
 });
 
 describe('Calculating required buffer length ', function() {
-
   it('Should work with events of Format 0 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat0.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat0.mid')
+        )
+      )
+    );
 
     events = mF.getTrackEvents(0);
     // -2 bytes for running statuses
-    assert.equal(MIDIEvents.getRequiredBufferLength(events) - 2,
-      mF.tracks[0].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events) - 2,
+      mF.tracks[0].getTrackLength()
+    );
   });
 
   it('Should work with events of Format 1 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1.mid')
+        )
+      )
+    );
     events = mF.getTrackEvents(0);
-    assert.equal(MIDIEvents.getRequiredBufferLength(events),
-      mF.tracks[0].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events),
+      mF.tracks[0].getTrackLength()
+    );
     events = mF.getTrackEvents(1);
     // -1 byte for running status
-    assert.equal(MIDIEvents.getRequiredBufferLength(events) - 1,
-      mF.tracks[1].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events) - 1,
+      mF.tracks[1].getTrackLength()
+    );
     events = mF.getTrackEvents(2);
     // -1 byte for running statuses
-    assert.equal(MIDIEvents.getRequiredBufferLength(events) - 1,
-      mF.tracks[2].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events) - 1,
+      mF.tracks[2].getTrackLength()
+    );
     events = mF.getTrackEvents(3);
     // -3 bytes for running statuses
-    assert.equal(MIDIEvents.getRequiredBufferLength(events) - 3,
-      mF.tracks[3].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events) - 3,
+      mF.tracks[3].getTrackLength()
+    );
   });
 
   it('Should work with events of Format 1 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1-lyrics.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat1-lyrics.mid')
+        )
+      )
+    );
 
     events = mF.getTrackEvents(0);
-    assert.equal(MIDIEvents.getRequiredBufferLength(events),
-      mF.tracks[0].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events),
+      mF.tracks[0].getTrackLength()
+    );
   });
 
   it('Should work with events of Format 2 MIDI file', function() {
     var events;
-    var mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', 'MIDIOkFormat2.mid'))
-    ));
+    var mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(
+          path.join(__dirname, '..', 'sounds', 'MIDIOkFormat2.mid')
+        )
+      )
+    );
 
     events = mF.getTrackEvents(0);
-    assert.equal(MIDIEvents.getRequiredBufferLength(events),
-      mF.tracks[0].getTrackLength());
+    assert.equal(
+      MIDIEvents.getRequiredBufferLength(events),
+      mF.tracks[0].getTrackLength()
+    );
   });
-
 });
 
 describe('MIDI file', function() {
@@ -449,20 +530,20 @@ describe('MIDI file', function() {
     events = mF.getTrackEvents(1);
     assert.equal(events.length, 1);
   });
-
 });
 
 describe('MIDI file reencryption loop should work', function() {
-
   function encodingLoop(filePath) {
     var mF;
     var newMF;
     var mFEvents;
     var newMFEvents;
 
-    mF = new MIDIFile(toArrayBuffer(
-      fs.readFileSync(path.join(__dirname, '..', 'sounds', filePath))
-    ));
+    mF = new MIDIFile(
+      toArrayBuffer(
+        fs.readFileSync(path.join(__dirname, '..', 'sounds', filePath))
+      )
+    );
     mF.tracks.forEach(function(track, index) {
       var events = mF.getTrackEvents(index);
       mF.setTrackEvents(index, events);
@@ -476,14 +557,19 @@ describe('MIDI file reencryption loop should work', function() {
       // Remove indexes since it is normal they differs
       delete event.index;
       delete newMFEvents[index].index;
-      assert.deepEqual(event, newMFEvents[index], 'Same event at index:' + index);
+      assert.deepEqual(
+        event,
+        newMFEvents[index],
+        'Same event at index:' + index
+      );
     });
   }
 
   function dirEncodingLoop(dirName) {
-    fs.readdirSync(path.join(__dirname, '..', 'sounds', dirName))
+    fs
+      .readdirSync(path.join(__dirname, '..', 'sounds', dirName))
       .forEach(function(file) {
-        if('README.md' !== file) {
+        if ('README.md' !== file) {
           encodingLoop(path.join(dirName, file));
         }
       });
@@ -520,5 +606,4 @@ describe('MIDI file reencryption loop should work', function() {
     this.timeout(10000);
     dirEncodingLoop('Yubatake');
   });
-
 });

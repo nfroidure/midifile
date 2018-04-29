@@ -11,7 +11,14 @@
     "data": {
       "files": "src/*.js tests/*.mocha.js",
       "testsFiles": "tests/*.mocha.js"
-    }
+    },
+    "configs": [
+      "readme",
+      "mocha",
+      "eslint",
+      "codeclimate",
+      "travis"
+    ]
   },
   "repository": {
     "type": "git",
@@ -22,31 +29,38 @@
     "node": ">=6.9.5"
   },
   "dependencies": {
-    "debug": "1.0.0",
-    "midievents": "^1.0.1",
+    "midievents": "^2.0.0",
     "utf-8": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^12.0.2",
-    "coveralls": "2.11.15",
-    "eslint": "3.4.0",
-    "eslint-config-simplifield": "4.1.1",
-    "istanbul": "0.4.5",
-    "metapak": "0.0.13",
-    "metapak-nfroidure": "0.0.9",
-    "mocha": "3.2.0",
-    "mocha-lcov-reporter": "1.2.0"
+    "commitizen": "^2.9.6",
+    "conventional-changelog-cli": "^1.3.8",
+    "coveralls": "^3.0.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.19.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "istanbul": "^0.4.5",
+    "metapak": "1.0.3",
+    "metapak-nfroidure": "6.0.0",
+    "mocha": "^5.0.0",
+    "mocha-lcov-reporter": "^1.3.0",
+    "prettier": "^1.11.1"
   },
   "scripts": {
     "build": "browserify -s MIDIFile src/MIDIFile.js > dist/MIDIFile.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "cli": "env NODE_ENV=${NODE_ENV:-cli}",
     "cover": "istanbul cover _mocha --report html -- tests/*.mocha.js -R spec -t 5000",
     "coveralls": "istanbul cover _mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
     "lint": "eslint src/*.js tests/*.mocha.js",
-    "metapak": "metapak || echo 'Please `npm install --save-dev metapak`' exit 0",
-    "postinstall": "npm run metapak",
-    "preversion": "npm t && npm run lint",
-    "test": "mocha tests/*.mocha.js"
+    "metapak": "metapak",
+    "mocha": "mocha tests/*.mocha.js",
+    "prettier": "prettier --write src/*.js tests/*.mocha.js",
+    "preversion": "npm t && npm run lint && npm run metapak -s",
+    "test": "mocha tests/*.mocha.js && npm run mocha",
+    "version": "npm run changelog && git add CHANGELOG.md"
   },
   "keywords": [
     "sound",
@@ -56,5 +70,24 @@
     "format",
     "read",
     "write"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "greenkeeper": {
+    "ignore": [
+      "commitizen",
+      "cz-conventional-changelog",
+      "conventional-changelog-cli",
+      "mocha",
+      "mocha-lcov-reporter",
+      "coveralls",
+      "istanbul",
+      "eslint",
+      "eslint-config-prettier",
+      "prettier"
+    ]
+  }
 }
